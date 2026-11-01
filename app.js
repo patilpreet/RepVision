@@ -68,100 +68,220 @@ function angleAt(a, b, c) {
     return (Math.acos(cos) * 180) / Math.PI;
 }
 
-// Sound Manager with Web Audio API + Audio Elements
+// Sound Manager with Web Audio API + Audio Elements + SpeechSynthesis
 class SoundManager {
     constructor() {
         this.audioCtx = null;
         this.muted = false;
-        this.audioCache = new Map();
-        this.custom20Audio = new Audio('sounds/custom_20_plus.mp3');
-        this.custom35Audio = new Audio('sounds/custom_35_plus.mp3');
+        this.unlocked = false;
+        this.bufferCache = new Map();
+
+        // Safe relative base path
+        this.baseUrl = new URL('.', window.location.href).href;
+        this.custom20Url = new URL('sounds/custom_20_plus.mp3', this.baseUrl).href;
+        this.custom35Url = new URL('sounds/custom_35_plus.mp3', this.baseUrl).href;
     }
 
     init() {
         if (!this.audioCtx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            this.audioCtx = new AudioContext();
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioContextClass) {
+                this.audioCtx = new AudioContextClass();
+            }
         }
-        if (this.audioCtx.state === 'suspended') {
-            this.audioCtx.resume();
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume().catch(() => {});
+        }
+
+        // Unlock Web Audio on iOS Safari & mobile Chrome
+        if (!this.unlocked && this.audioCtx) {
+            try {
+                const buffer = this.audioCtx.createBuffer(1, 1, 22050);
+                const source = this.audioCtx.createBufferSource();
+                source.buffer = buffer;
+                source.connect(this.audioCtx.destination);
+                source.start(0);
+                this.unlocked = true;
+            } catch (e) {
+                console.warn('Audio unlock note:', e);
+            }
+        }
+
+        // Unlock SpeechSynthesis for mobile Safari
+        if ('speechSynthesis' in window) {
+            try {
+                const silentUtterance = new SpeechSynthesisUtterance('');
+                window.speechSynthesis.speak(silentUtterance);
+            } catch (e) {}
+        }
+    }
+
+    // Preload key audio buffers into memory
+    preloadKeySounds() {
+        if (!this.audioCtx) return;
+        this.loadAudioBuffer(this.custom20Url);
+        this.loadAudioBuffer(this.custom35Url);
+        for (let i = 1; i <= 5; i++) {
+            this.loadAudioBuffer(new URL(`sounds/${i}.wav`, this.baseUrl).href);
+        }
+    }
+
+    async loadAudioBuffer(url) {
+        if (!this.audioCtx) return null;
+        if (this.bufferCache.has(url)) {
+            return this.bufferCache.get(url);
+        }
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const arrayBuffer = await response.arrayBuffer();
+            const decoded = await this.audioCtx.decodeAudioData(arrayBuffer);
+            this.bufferCache.set(url, decoded);
+            return decoded;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    async playSoundUrl(url, volume = 1.0, fallbackFn = null) {
+        if (this.muted) return;
+        this.init();
+
+        // 1. Try playing via decoded Web Audio buffer (guaranteed no autoplay rejection)
+        if (this.audioCtx) {
+            try {
+                let buffer = await this.loadAudioBuffer(url);
+                if (buffer) {
+                    const source = this.audioCtx.createBufferSource();
+                    const gain = this.audioCtx.createGain();
+                    gain.gain.value = volume;
+                    source.buffer = buffer;
+                    source.connect(gain);
+                    gain.connect(this.audioCtx.destination);
+                    source.start(0);
+                    return true;
+                }
+            } catch (e) {
+                console.warn('Web Audio playback failed, falling back:', e);
+            }
+        }
+
+        // 2. Try HTML5 Audio element
+        try {
+            const audio = new Audio(url);
+            audio.volume = volume;
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    if (fallbackFn) fallbackFn();
+                });
+            }
+            return true;
+        } catch (e) {
+            if (fallbackFn) fallbackFn();
+            return false;
         }
     }
 
     playChime() {
-        if (this.muted || !this.audioCtx) return;
-        const now = this.audioCtx.currentTime;
+        if (this.muted) return;
+        this.init();
+        if (!this.audioCtx) return;
 
-        // Two-tone bell chime: D5 (587.33Hz) + A5 (880Hz)
-        const osc1 = this.audioCtx.createOscillator();
-        const osc2 = this.audioCtx.createOscillator();
-        const gain = this.audioCtx.createGain();
+        try {
+            const now = this.audioCtx.currentTime;
 
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(587.33, now);
+            // Two-tone bell chime: D5 (587.33Hz) + A5 (880Hz)
+            const osc1 = this.audioCtx.createOscillator();
+            const osc2 = this.audioCtx.createOscillator();
+            const gain = this.audioCtx.createGain();
 
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(880.0, now);
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(587.33, now);
 
-        gain.gain.setValueAtTime(0.35, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(880.0, now);
 
-        osc1.connect(gain);
-        osc2.connect(gain);
-        gain.connect(this.audioCtx.destination);
+            gain.gain.setValueAtTime(0.4, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
 
-        osc1.start(now);
-        osc2.start(now);
-        osc1.stop(now + 0.25);
-        osc2.stop(now + 0.25);
+            osc1.connect(gain);
+            osc2.connect(gain);
+            gain.connect(this.audioCtx.destination);
+
+            osc1.start(now);
+            osc2.start(now);
+            osc1.stop(now + 0.3);
+            osc2.stop(now + 0.3);
+        } catch (e) {
+            console.warn('Chime oscillator error:', e);
+        }
+    }
+
+    speak(text) {
+        if (this.muted) return;
+        if ('speechSynthesis' in window) {
+            try {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(String(text));
+                utterance.rate = 1.3;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                window.speechSynthesis.speak(utterance);
+            } catch (e) {}
+        }
     }
 
     playRep(num) {
         if (this.muted) return;
         this.init();
+
+        // 1. Instant bell chime SFX
         this.playChime();
 
-        // Tiered custom audio:
-        // >= 35: custom 35+ sound
-        // 20 to 34: custom 20+ sound
+        // 2. Tiered custom motivation/milestone audio
         if (num >= 35) {
-            this.custom35Audio.currentTime = 0;
-            this.custom35Audio.play().catch(() => {});
+            this.playSoundUrl(this.custom35Url, 1.0);
         } else if (num >= 20) {
-            this.custom20Audio.currentTime = 0;
-            this.custom20Audio.play().catch(() => {});
+            this.playSoundUrl(this.custom20Url, 1.0);
         }
 
-        // Voice counting (1, 2, 3...)
-        const audioSrc = `sounds/${num}.wav`;
-        let audio = this.audioCache.get(audioSrc);
-        if (!audio) {
-            audio = new Audio(audioSrc);
-            this.audioCache.set(audioSrc, audio);
-        }
-        audio.currentTime = 0;
-        audio.play().catch(e => {
-            // Speech synthesis fallback if sound file not loaded
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(String(num));
-                utterance.rate = 1.3;
-                window.speechSynthesis.speak(utterance);
-            }
+        // 3. Voice counting: try recorded wav first, fallback to browser speech synthesis
+        const wavUrl = new URL(`sounds/${num}.wav`, this.baseUrl).href;
+        this.playSoundUrl(wavUrl, 1.0, () => {
+            this.speak(num);
         });
     }
 
     playReset() {
-        if (this.muted || !this.audioCtx) return;
-        const now = this.audioCtx.currentTime;
-        const osc = this.audioCtx.createOscillator();
-        const gain = this.audioCtx.createGain();
-        osc.frequency.setValueAtTime(330, now);
-        gain.gain.setValueAtTime(0.25, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-        osc.connect(gain);
-        gain.connect(this.audioCtx.destination);
-        osc.start(now);
-        osc.stop(now + 0.15);
+        if (this.muted) return;
+        this.init();
+        if (!this.audioCtx) return;
+
+        try {
+            const now = this.audioCtx.currentTime;
+            const osc = this.audioCtx.createOscillator();
+            const gain = this.audioCtx.createGain();
+            osc.frequency.setValueAtTime(330, now);
+            gain.gain.setValueAtTime(0.3, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+            osc.connect(gain);
+            gain.connect(this.audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.18);
+        } catch (e) {}
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    testAudio() {
+        this.init();
+        this.playChime();
+        setTimeout(() => {
+            this.speak("Sound working!");
+        }, 300);
     }
 }
 
@@ -177,6 +297,7 @@ const startBtn = document.getElementById('startBtn');
 const resetBtn = document.getElementById('resetBtn');
 const muteBtn = document.getElementById('muteBtn');
 const cameraFlipBtn = document.getElementById('cameraFlipBtn');
+const testAudioBtn = document.getElementById('testAudioBtn');
 
 let repCount = 0;
 let repStage = null; // null -> "down" -> "up"
@@ -373,9 +494,26 @@ async function processVideoLoop() {
 // Event Listeners
 startBtn.addEventListener('click', () => {
     soundManager.init();
+    soundManager.preloadKeySounds();
+    soundManager.playChime(); // Immediate audible confirmation that sound is active
     startOverlay.style.display = 'none';
     startCamera();
 });
+
+if (testAudioBtn) {
+    testAudioBtn.addEventListener('click', () => {
+        soundManager.testAudio();
+    });
+}
+
+// Global unlock on first touch/click anywhere on page
+window.addEventListener('click', () => {
+    soundManager.init();
+}, { once: true });
+
+window.addEventListener('touchstart', () => {
+    soundManager.init();
+}, { once: true });
 
 resetBtn.addEventListener('click', () => {
     repCount = 0;
