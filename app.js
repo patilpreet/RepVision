@@ -399,3 +399,4 @@ cameraFlipBtn.addEventListener('click', () => {
     canvasElement.style.transform = currentFacingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
     startCamera();
 });
+
