@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RepVision - AI Hammer Curl Rep Counter</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- MediaPipe Pose CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="brand">
+                <span class="logo-icon">⚡</span>
+                <span class="title">RepVision</span>
+                <span class="badge">AI Live</span>
+            </div>
+            <div class="controls-top">
+                <button id="cameraFlipBtn" class="icon-btn" title="Flip Camera (Front/Back)">🔄</button>
+                <button id="muteBtn" class="icon-btn" title="Toggle Sound">🔊</button>
+                <button id="resetBtn" class="icon-btn danger" title="Reset Counter">↺ Reset</button>
+            </div>
+        </header>
+
+        <!-- Video & Canvas Viewport -->
+        <div class="viewport" id="viewport">
+            <video id="webcam" playsinline webkit-playsinline autoplay muted></video>
+            <canvas id="output_canvas"></canvas>
+
+            <!-- Counter HUD Card -->
+            <div class="counter-card" id="counterCard">
+                <div class="counter-header">REPS</div>
+                <div class="counter-number" id="repCount">0</div>
+                <div class="counter-status" id="repStatus">Ready</div>
+            </div>
+
+            <!-- Start / Permission Overlay -->
+            <div class="start-overlay" id="startOverlay">
+                <div class="overlay-modal">
+                    <div class="modal-icon">💪</div>
+                    <h2>Hammer Curl Counter</h2>
+                    <p>Track your reps live on PC or Mobile using AI pose tracking with voice & sound effects.</p>
+                    <button id="startBtn" class="primary-btn">Start Workout</button>
+                    <span class="permission-note">Camera access required</span>
+                </div>
+            </div>
+
+            <!-- Angle indicator badge -->
+            <div class="angle-badge" id="angleBadge">Angle: --°</div>
+        </div>
+
+        <!-- Bottom Controls for Mobile / Desktop -->
+        <footer class="footer">
+            <div class="instructions">
+                <span>Stand back so your arms & shoulders are visible. Fully extend down (&gt;150°) then curl up (&lt;60°).</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
