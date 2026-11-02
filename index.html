@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <base href="./">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0c0d0f">
     <title>RepVision - AI Hammer Curl Rep Counter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- MediaPipe Pose CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
@@ -12,58 +16,74 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 </head>
 <body>
+    <!-- Icon sprite -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" fill="currentColor"/></symbol>
+            <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7Zm4 10a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+            <symbol id="i-flip" viewBox="0 0 24 24"><path d="M4 8h13l-3-3m6 11H7l3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+            <symbol id="i-vol" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4Zm12-1a4 4 0 0 1 0 6m2.5-9a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+            <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4Zm12 0 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+            <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+            <symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+        </defs>
+    </svg>
+
     <div class="app-container">
-        <!-- Header -->
         <header class="header">
             <div class="brand">
-                <span class="logo-icon">⚡</span>
+                <span class="logo-icon"><svg><use href="#i-bolt"/></svg></span>
                 <span class="title">RepVision</span>
-                <span class="badge">AI Live</span>
+                <span class="badge"><i></i>Live</span>
             </div>
             <div class="controls-top">
-                <button id="testAudioBtn" class="icon-btn" title="Test Audio">🔔 Test</button>
-                <button id="cameraFlipBtn" class="icon-btn" title="Flip Camera (Front/Back)">🔄</button>
-                <button id="muteBtn" class="icon-btn" title="Toggle Sound">🔊</button>
-                <button id="resetBtn" class="icon-btn danger" title="Reset Counter">↺ Reset</button>
+                <button id="testAudioBtn" class="icon-btn" title="Test sound"><svg><use href="#i-bell"/></svg><span class="lbl">Test</span></button>
+                <button id="cameraFlipBtn" class="icon-btn" title="Flip camera"><svg><use href="#i-flip"/></svg></button>
+                <button id="muteBtn" class="icon-btn" title="Toggle sound"><svg><use href="#i-vol"/></svg></button>
+                <button id="resetBtn" class="icon-btn danger" title="Reset counter"><svg><use href="#i-reset"/></svg><span class="lbl">Reset</span></button>
             </div>
         </header>
 
-        <!-- Video & Canvas Viewport -->
         <div class="viewport" id="viewport">
             <video id="webcam" playsinline webkit-playsinline autoplay muted></video>
             <canvas id="output_canvas"></canvas>
+            <div class="vignette"></div>
 
-            <!-- Counter HUD Card -->
-            <div class="counter-card" id="counterCard">
-                <div class="counter-header">REPS</div>
-                <div class="counter-number" id="repCount">0</div>
-                <div class="counter-status" id="repStatus">Ready</div>
-            </div>
-
-            <!-- Start / Permission Overlay -->
-            <div class="start-overlay" id="startOverlay">
-                <div class="overlay-modal">
-                    <div class="modal-icon">💪</div>
-                    <h2>Hammer Curl Counter</h2>
-                    <p>Track your reps live on PC or Mobile using AI pose tracking with voice & sound effects.</p>
-                    <button id="startBtn" class="primary-btn">Start Workout</button>
-                    <span class="permission-note">Camera access required</span>
+            <!-- Counter HUD -->
+            <div class="counter-card" id="counterCard" data-state="idle">
+                <div class="ring">
+                    <svg viewBox="0 0 120 120">
+                        <circle class="ring-track" cx="60" cy="60" r="54"/>
+                        <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="54"/>
+                    </svg>
+                    <div class="ring-core">
+                        <div class="counter-header">Reps</div>
+                        <div class="counter-number" id="repCount">0</div>
+                    </div>
+                </div>
+                <div class="counter-meta">
+                    <div class="counter-status" id="repStatus"><i class="dot"></i>Ready</div>
+                    <div class="angle-badge" id="angleBadge">Angle: --°</div>
                 </div>
             </div>
 
-            <!-- Angle indicator badge -->
-            <div class="angle-badge" id="angleBadge">Angle: --°</div>
-        </div>
+            <div class="hint">Extend past 150°, then curl below 60°</div>
 
-        <!-- Bottom Controls for Mobile / Desktop -->
-        <footer class="footer">
-            <div class="instructions">
-                <span>Stand back so your arms & shoulders are visible. Fully extend down (&gt;150°) then curl up (&lt;60°).</span>
+            <!-- Start overlay -->
+            <div class="start-overlay" id="startOverlay">
+                <svg class="bg-ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54"/></svg>
+                <div class="overlay-modal">
+                    <div class="modal-icon"><svg><use href="#i-dumbbell"/></svg></div>
+                    <h2>Hammer curl counter</h2>
+                    <p>Stand back so both arms are in frame. Each full curl counts as one rep, with a sound on every count.</p>
+                    <button id="startBtn" class="primary-btn">Start workout</button>
+                    <span class="permission-note">Camera access is required. Video is processed on your device.</span>
+                </div>
             </div>
-        </footer>
+        </div>
     </div>
 
     <script src="app.js"></script>
+    <script src="ui.js"></script>
 </body>
 </html>
-

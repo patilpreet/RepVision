@@ -401,7 +401,7 @@ function onPoseResults(results) {
     [trails.L, trails.R].forEach(trail => {
         for (let i = 1; i < trail.length; i++) {
             const alpha = i / trail.length;
-            canvasCtx.strokeStyle = `rgba(90, 230, 210, ${alpha})`;
+            canvasCtx.strokeStyle = `rgba(91, 140, 255, ${alpha})`;
             canvasCtx.lineWidth = 4;
             canvasCtx.beginPath();
             canvasCtx.moveTo(trail[i - 1][0], trail[i - 1][1]);
@@ -413,7 +413,7 @@ function onPoseResults(results) {
     // Draw Skeleton Bones
     BONES.forEach(([a, b]) => {
         if (pts[a] && pts[b]) {
-            canvasCtx.strokeStyle = '#3cdc78';
+            canvasCtx.strokeStyle = '#6fe3b0';
             canvasCtx.lineWidth = 4;
             canvasCtx.beginPath();
             canvasCtx.moveTo(pts[a][0], pts[a][1]);
@@ -427,7 +427,7 @@ function onPoseResults(results) {
         if (pts[j]) {
             const [x, y] = pts[j];
             canvasCtx.fillStyle = '#ffffff';
-            canvasCtx.strokeStyle = '#3cdc78';
+            canvasCtx.strokeStyle = '#6fe3b0';
             canvasCtx.lineWidth = 2.5;
             canvasCtx.beginPath();
             canvasCtx.arc(x, y, 6, 0, 2 * Math.PI);
@@ -496,7 +496,10 @@ startBtn.addEventListener('click', () => {
     soundManager.init();
     soundManager.preloadKeySounds();
     soundManager.playChime(); // Immediate audible confirmation that sound is active
-    startOverlay.style.display = 'none';
+    startOverlay.classList.add('is-leaving');
+    setTimeout(() => {
+        startOverlay.style.display = 'none';
+    }, 600);
     startCamera();
 });
 
@@ -520,14 +523,15 @@ resetBtn.addEventListener('click', () => {
     repStage = null;
     repCountEl.textContent = '0';
     repStatusEl.textContent = 'Ready';
-    repStatusEl.style.color = '#5ae6d2';
     angleBadgeEl.textContent = 'Angle: --°';
     soundManager.playReset();
 });
 
 muteBtn.addEventListener('click', () => {
     soundManager.muted = !soundManager.muted;
-    muteBtn.textContent = soundManager.muted ? '🔇' : '🔊';
+    muteBtn.innerHTML = soundManager.muted 
+        ? '<svg><use href="#i-mute"/></svg>' 
+        : '<svg><use href="#i-vol"/></svg>';
 });
 
 cameraFlipBtn.addEventListener('click', () => {
