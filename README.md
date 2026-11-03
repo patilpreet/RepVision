@@ -59,15 +59,16 @@ Works natively in the **Web Browser (Mobile & PC)** and on **Desktop (Python Win
 
 ## 📱 How to Switch Exercises
 
-1. Tap the **Exercise Pill** in the top navigation bar (e.g. `Hammer Curl ▾`).
-2. A bottom sheet / modal will appear with muscle category tabs (`Biceps`, `Triceps`, `Chest`, `Shoulders`, `Back`, `Legs`, `Core`, `Manual`).
-3. Tap on any exercise card to switch.
-4. RepVision will immediately configure:
+1. **Direct Exercise Buttons (Top Bar)**: Tap any exercise button directly on the website interface (e.g. `[🔨 Hammer Curl]`, `[🛑 Pushup]`, `[🦵 Squat]`, `[⏱️ Plank]`).
+2. **Muscle Category Filter**: Tap category buttons (`All`, `Biceps`, `Triceps`, `Chest`, `Shoulders`, `Back`, `Legs`, `Core`, `Manual`) to immediately filter the exercise buttons on screen.
+3. **Start Screen Picker**: Directly select any exercise from the quick exercise grid before hitting "Start Workout".
+4. **Full Catalog Modal**: Tap the **Exercise Pill** in the header or **Browse Full Catalog** to open the full modal view.
+5. RepVision will immediately configure:
    - Required skeleton joint lines and angle overlays.
    - Recommended camera placement tip banner.
    - Start and end angle thresholds (including any custom overrides you've saved).
    - Camera or Manual mode layout.
-5. Your choice is automatically persisted to `localStorage` and will reload on your next session.
+6. Your choice is automatically persisted to `localStorage` and will reload on your next session.
 
 ---
 

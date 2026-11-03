@@ -43,8 +43,8 @@
                     <span class="logo-icon"><svg><use href="#i-bolt"/></svg></span>
                     <span class="title">RepVision</span>
                 </div>
-                <!-- Exercise Selector Button -->
-                <button id="exerciseSelectBtn" class="exercise-pill" title="Select Exercise">
+                <!-- Exercise Selector Pill -->
+                <button id="exerciseSelectBtn" class="exercise-pill" title="Select Exercise Catalog">
                     <span class="exercise-pill-dot"></span>
                     <span id="currentExerciseName" class="exercise-name">Hammer Curl</span>
                     <svg class="chevron"><use href="#i-chevron-down"/></svg>
@@ -59,6 +59,19 @@
                 <button id="muteBtn" class="icon-btn" title="Toggle sound"><svg><use href="#i-vol"/></svg></button>
             </div>
         </header>
+
+        <!-- Direct Exercise Buttons Navigation Bar (Visible on Website) -->
+        <nav class="exercise-nav-bar" id="exerciseNavBar" aria-label="Exercise Quick Selector">
+            <div class="exercise-nav-header">
+                <span class="exercise-nav-title">Exercise:</span>
+                <div class="muscle-strip" id="quickMuscleStrip" role="tablist">
+                    <!-- Populated dynamically: All, Biceps, Triceps, Chest, Shoulders, Back, Legs, Core, Manual -->
+                </div>
+            </div>
+            <div class="exercise-buttons-strip" id="quickExerciseStrip" role="toolbar" aria-label="Exercise Buttons">
+                <!-- Direct Exercise Buttons rendered here -->
+            </div>
+        </nav>
 
         <!-- Viewport -->
         <div class="viewport" id="viewport">
@@ -123,9 +136,18 @@
                         <span class="muscle-tag" id="modalMuscleTag">Biceps</span>
                     </div>
                     <p id="modalTipText">Place phone at chest height in front of you. Each full curl counts as one rep, with a sound on every count.</p>
+                    
+                    <!-- Direct Exercise Buttons on Start Screen -->
+                    <div class="start-exercise-picker">
+                        <span class="start-picker-title">Select Exercise:</span>
+                        <div class="start-exercise-grid" id="startExerciseGrid">
+                            <!-- Populated dynamically with all exercise buttons -->
+                        </div>
+                    </div>
+
                     <div class="start-btn-group">
-                        <button id="startBtn" class="primary-btn">Start workout</button>
-                        <button id="startChooseExBtn" class="secondary-btn">Change exercise</button>
+                        <button id="startBtn" class="primary-btn">Start Workout</button>
+                        <button id="startChooseExBtn" class="secondary-btn">Browse Full Catalog</button>
                     </div>
                     <span class="permission-note">Camera access is required. Video is processed on your device.</span>
                 </div>

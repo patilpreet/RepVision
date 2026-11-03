@@ -301,6 +301,11 @@ const manualExName       = document.getElementById('manualExName');
 const manualRepDisplay   = document.getElementById('manualRepDisplay');
 const manualBigAddBtn    = document.getElementById('manualBigAddBtn');
 
+// Direct Exercise Buttons Navigation Bar & Start Picker
+const quickMuscleStrip   = document.getElementById('quickMuscleStrip');
+const quickExerciseStrip = document.getElementById('quickExerciseStrip');
+const startExerciseGrid  = document.getElementById('startExerciseGrid');
+
 // Modals
 const exerciseModal      = document.getElementById('exerciseModal');
 const exerciseBackdrop   = document.getElementById('exerciseBackdrop');
@@ -443,6 +448,37 @@ function selectExercise(exerciseId) {
   // Reset count display
   updateHUDDisplays();
 
+  // Update Start Button Text
+  if (startBtn) {
+    startBtn.textContent = `Start ${currentExercise.name}`;
+  }
+
+  // Sync Quick Exercise Bar
+  if (currentNavCategory !== 'all' && currentExercise.muscle !== currentNavCategory) {
+    currentNavCategory = currentExercise.muscle;
+    document.querySelectorAll('.muscle-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.muscle === currentNavCategory);
+    });
+    renderQuickExerciseButtons(currentNavCategory);
+  } else {
+    document.querySelectorAll('.ex-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.id === currentExercise.id);
+    });
+  }
+
+  // Scroll active button into view in top strip
+  if (quickExerciseStrip) {
+    const activeBtn = quickExerciseStrip.querySelector(`.ex-btn[data-id="${currentExercise.id}"]`);
+    if (activeBtn) {
+      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  }
+
+  // Sync Start Screen Exercise Picker Buttons
+  document.querySelectorAll('.start-ex-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.id === currentExercise.id);
+  });
+
   // Highlight in modal if open
   renderExerciseList(currentActiveMuscleTab);
 }
@@ -455,15 +491,88 @@ function updateHUDDisplays() {
   if (manualRepDisplay) manualRepDisplay.textContent = repCounter.reps;
 }
 
+// ---------------- Direct Exercise Buttons on Website ----------------
+let currentNavCategory = 'all';
+
+function initQuickExerciseBar() {
+  if (!quickMuscleStrip || !quickExerciseStrip) return;
+
+  quickMuscleStrip.innerHTML = '';
+  MUSCLE_GROUPS.forEach(mg => {
+    const btn = document.createElement('button');
+    btn.className = `muscle-btn ${mg.id === currentNavCategory ? 'active' : ''}`;
+    btn.dataset.muscle = mg.id;
+    btn.innerHTML = `<span>${mg.icon || '💪'}</span><span>${mg.name}</span>`;
+    btn.addEventListener('click', () => {
+      currentNavCategory = mg.id;
+      document.querySelectorAll('.muscle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderQuickExerciseButtons(currentNavCategory);
+    });
+    quickMuscleStrip.appendChild(btn);
+  });
+
+  renderQuickExerciseButtons(currentNavCategory);
+}
+
+function renderQuickExerciseButtons(categoryId = 'all') {
+  if (!quickExerciseStrip) return;
+  quickExerciseStrip.innerHTML = '';
+
+  const list = categoryId === 'all' 
+    ? EXERCISES 
+    : EXERCISES.filter(e => e.muscle === categoryId);
+
+  list.forEach(ex => {
+    const btn = document.createElement('button');
+    btn.className = `ex-btn ${currentExercise && ex.id === currentExercise.id ? 'active' : ''}`;
+    btn.dataset.id = ex.id;
+    btn.title = `${ex.name} (${ex.view || 'front'} view)`;
+
+    let tag = ex.view || 'front';
+    if (ex.mode === 'timer') tag = 'timer';
+    if (ex.mode === 'manual') tag = 'manual';
+
+    btn.innerHTML = `
+      <span class="ex-btn-icon">${ex.icon || '⚡'}</span>
+      <span class="ex-btn-name">${ex.name}</span>
+      <span class="ex-btn-tag">${tag}</span>
+    `;
+
+    btn.addEventListener('click', () => {
+      selectExercise(ex.id);
+    });
+
+    quickExerciseStrip.appendChild(btn);
+  });
+}
+
+// ---------------- Direct Exercise Buttons on Start Overlay ----------------
+function initStartScreenExercisePicker() {
+  if (!startExerciseGrid) return;
+  startExerciseGrid.innerHTML = '';
+
+  EXERCISES.forEach(ex => {
+    const btn = document.createElement('button');
+    btn.className = `start-ex-btn ${currentExercise && ex.id === currentExercise.id ? 'active' : ''}`;
+    btn.dataset.id = ex.id;
+    btn.innerHTML = `<span>${ex.icon || '⚡'}</span><span>${ex.name}</span>`;
+    btn.addEventListener('click', () => {
+      selectExercise(ex.id);
+    });
+    startExerciseGrid.appendChild(btn);
+  });
+}
+
 // ---------------- Exercise Picker Modal ----------------
-let currentActiveMuscleTab = 'biceps';
+let currentActiveMuscleTab = 'all';
 
 function initExercisePicker() {
   muscleTabs.innerHTML = '';
   MUSCLE_GROUPS.forEach(mg => {
     const btn = document.createElement('button');
     btn.className = `tab-btn ${mg.id === currentActiveMuscleTab ? 'active' : ''}`;
-    btn.textContent = mg.name;
+    btn.textContent = `${mg.icon || ''} ${mg.name}`.trim();
     btn.addEventListener('click', () => {
       currentActiveMuscleTab = mg.id;
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -478,7 +587,9 @@ function initExercisePicker() {
 
 function renderExerciseList(muscleId) {
   exerciseList.innerHTML = '';
-  const filtered = EXERCISES.filter(e => e.muscle === muscleId);
+  const filtered = muscleId === 'all' 
+    ? EXERCISES 
+    : EXERCISES.filter(e => e.muscle === muscleId);
 
   filtered.forEach(ex => {
     const item = document.createElement('button');
@@ -877,9 +988,11 @@ function setupEventListeners() {
     startCamera();
   });
 
-  startChooseExBtn.addEventListener('click', () => {
-    openModal(exerciseModal);
-  });
+  if (startChooseExBtn) {
+    startChooseExBtn.addEventListener('click', () => {
+      openModal(exerciseModal);
+    });
+  }
 
   // Exercise Picker
   exerciseSelectBtn.addEventListener('click', () => {
@@ -1035,6 +1148,8 @@ try {
   if (saved) initialExId = saved;
 } catch (e) {}
 
+initQuickExerciseBar();
+initStartScreenExercisePicker();
 selectExercise(initialExId);
 initExercisePicker();
 setupEventListeners();

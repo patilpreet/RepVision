@@ -177,3 +177,4 @@ test('Manual mode addRep and undoRep', () => {
 });
 
 console.log(`\nAll ${testsPassed} unit tests passed successfully!`);
+
