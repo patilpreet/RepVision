@@ -516,6 +516,12 @@ function selectExercise(exerciseId) {
   document.querySelectorAll('.start-ex-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.id === currentExercise.id);
   });
+  if (startExerciseGrid) {
+    const activeStartBtn = startExerciseGrid.querySelector(`.start-ex-btn[data-id="${currentExercise.id}"]`);
+    if (activeStartBtn) {
+      activeStartBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
 
   // Highlight in modal if open
   renderExerciseList(currentActiveMuscleTab);
