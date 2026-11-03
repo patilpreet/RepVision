@@ -302,6 +302,8 @@ const manualRepDisplay   = document.getElementById('manualRepDisplay');
 const manualBigAddBtn    = document.getElementById('manualBigAddBtn');
 
 // Direct Exercise Buttons Navigation Bar & Start Picker
+const exerciseNavBar    = document.getElementById('exerciseNavBar');
+const toggleNavBtn      = document.getElementById('toggleNavBtn');
 const quickMuscleStrip   = document.getElementById('quickMuscleStrip');
 const quickExerciseStrip = document.getElementById('quickExerciseStrip');
 const startExerciseGrid  = document.getElementById('startExerciseGrid');
@@ -991,6 +993,13 @@ function setupEventListeners() {
   if (startChooseExBtn) {
     startChooseExBtn.addEventListener('click', () => {
       openModal(exerciseModal);
+    });
+  }
+
+  // Toggle Exercise Navigation Bar
+  if (toggleNavBtn && exerciseNavBar) {
+    toggleNavBtn.addEventListener('click', () => {
+      exerciseNavBar.classList.toggle('collapsed');
     });
   }
 
