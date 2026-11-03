@@ -3,7 +3,7 @@
   const $ = id => document.getElementById(id);
   const card = $('counterCard'), count = $('repCount'), status = $('repStatus'),
         angle = $('angleBadge'), ring = $('ringFill'), mute = $('muteBtn'), overlay = $('startOverlay');
-  const C = 339.3;
+  const C = 326.7;
 
   if (!card || !count) return;
 

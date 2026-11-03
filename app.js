@@ -271,17 +271,26 @@ const repStatusEl        = document.getElementById('repStatus');
 const angleBadgeEl       = document.getElementById('angleBadge');
 const counterHeaderLabel = document.getElementById('counterHeaderLabel');
 const hudExerciseTitle   = document.getElementById('hudExerciseTitle');
+const hudViewPill         = document.getElementById('hudViewPill');
 const currentExerciseName= document.getElementById('currentExerciseName');
+const currentExerciseIcon= document.getElementById('currentExerciseIcon');
 const placementHint      = document.getElementById('placementHint');
 const hintViewBadge      = document.getElementById('hintViewBadge');
+const hintViewIcon       = document.getElementById('hintViewIcon');
+const hintViewText       = document.getElementById('hintViewText');
 const hintText           = document.getElementById('hintText');
 const startOverlay       = document.getElementById('startOverlay');
 const startBtn           = document.getElementById('startBtn');
 const startChooseExBtn   = document.getElementById('startChooseExBtn');
+const startHeroIcon       = document.getElementById('startHeroIcon');
 const modalExerciseTitle = document.getElementById('modalExerciseTitle');
 const modalViewTag       = document.getElementById('modalViewTag');
+const modalViewTagText   = document.getElementById('modalViewTagText');
 const modalMuscleTag     = document.getElementById('modalMuscleTag');
+const modalRangeTag      = document.getElementById('modalRangeTag');
 const modalTipText       = document.getElementById('modalTipText');
+const catalogSearchInput = document.getElementById('catalogSearchInput');
+const catalogClearSearch = document.getElementById('catalogClearSearch');
 
 // Buttons
 const exerciseSelectBtn  = document.getElementById('exerciseSelectBtn');
@@ -411,23 +420,50 @@ function selectExercise(exerciseId) {
   currentExerciseName.textContent = currentExercise.name;
   hudExerciseTitle.textContent    = currentExercise.name;
   modalExerciseTitle.textContent  = currentExercise.name;
-  modalViewTag.textContent        = (currentExercise.view || 'front') + ' view';
-  modalMuscleTag.textContent      = currentExercise.muscle;
-  modalTipText.textContent        = currentExercise.tip || 'Stand back so your body is in frame.';
+  if (modalViewTagText) modalViewTagText.textContent = (currentExercise.view || 'front') + ' View';
+  if (modalMuscleTag) modalMuscleTag.textContent = currentExercise.muscle;
+  if (modalTipText) modalTipText.textContent = currentExercise.tip || 'Stand back so your body is in frame.';
 
-  hintViewBadge.textContent = (currentExercise.view || 'front').toUpperCase();
+  // Update Range Tag on Start Screen
+  if (modalRangeTag) {
+    if (currentExercise.mode === 'timer') {
+      modalRangeTag.textContent = 'Isometric Hold';
+    } else if (currentExercise.mode === 'manual') {
+      modalRangeTag.textContent = 'Manual Tally';
+    } else {
+      modalRangeTag.textContent = `${currentExercise.start}° → ${currentExercise.end}°`;
+    }
+  }
+
+  // Update Icons
+  if (currentExerciseIcon) {
+    currentExerciseIcon.innerHTML = `<use href="#${currentExercise.icon || 'i-dumbbell'}"/>`;
+  }
+  if (startHeroIcon) {
+    startHeroIcon.innerHTML = `<use href="#${currentExercise.icon || 'i-dumbbell'}"/>`;
+  }
+  if (hudViewPill) {
+    hudViewPill.textContent = (currentExercise.view || 'front').toUpperCase();
+  }
+  if (hintViewIcon) {
+    hintViewIcon.innerHTML = `<use href="#${currentExercise.view === 'side' ? 'i-camera-side' : 'i-camera-front'}"/>`;
+  }
+  if (hintViewText) {
+    hintViewText.textContent = (currentExercise.view || 'front').toUpperCase();
+  }
+
   if (currentExercise.mode === 'timer') {
     hintText.textContent = `Hold straight line (${currentExercise.start}° to ${currentExercise.end}°)`;
-    counterHeaderLabel.textContent = 'Hold (s)';
+    counterHeaderLabel.textContent = 'HOLD (S)';
   } else if (currentExercise.mode === 'manual') {
     hintText.textContent = 'Manual exercise - use +1 button to log reps';
-    counterHeaderLabel.textContent = 'Reps';
+    counterHeaderLabel.textContent = 'REPS';
   } else {
     const isCurl = currentExercise.start > currentExercise.end;
     const startText = isCurl ? `Extend past ${currentExercise.start}°` : `Lower past ${currentExercise.start}°`;
     const endText   = isCurl ? `curl below ${currentExercise.end}°` : `press above ${currentExercise.end}°`;
     hintText.textContent = `${startText}, then ${endText}`;
-    counterHeaderLabel.textContent = 'Reps';
+    counterHeaderLabel.textContent = 'REPS';
   }
 
   if (currentExercise.view === 'side') {
@@ -452,7 +488,7 @@ function selectExercise(exerciseId) {
 
   // Update Start Button Text
   if (startBtn) {
-    startBtn.textContent = `Start ${currentExercise.name}`;
+    startBtn.querySelector('span').textContent = `START ${currentExercise.name.toUpperCase()}`;
   }
 
   // Sync Quick Exercise Bar
@@ -488,7 +524,7 @@ function selectExercise(exerciseId) {
 function updateHUDDisplays() {
   if (!repCounter) return;
   repCountEl.textContent = repCounter.reps;
-  repStatusEl.textContent = repCounter.statusText;
+  repStatusEl.textContent = repCounter.statusText.toUpperCase();
   counterCard.dataset.progress = repCounter.progress.toFixed(3);
   if (manualRepDisplay) manualRepDisplay.textContent = repCounter.reps;
 }
@@ -502,9 +538,10 @@ function initQuickExerciseBar() {
   quickMuscleStrip.innerHTML = '';
   MUSCLE_GROUPS.forEach(mg => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = `muscle-btn ${mg.id === currentNavCategory ? 'active' : ''}`;
     btn.dataset.muscle = mg.id;
-    btn.innerHTML = `<span>${mg.icon || '💪'}</span><span>${mg.name}</span>`;
+    btn.innerHTML = `<svg><use href="#${mg.icon}"/></svg><span>${mg.name}</span>`;
     btn.addEventListener('click', () => {
       currentNavCategory = mg.id;
       document.querySelectorAll('.muscle-btn').forEach(b => b.classList.remove('active'));
@@ -527,16 +564,17 @@ function renderQuickExerciseButtons(categoryId = 'all') {
 
   list.forEach(ex => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = `ex-btn ${currentExercise && ex.id === currentExercise.id ? 'active' : ''}`;
     btn.dataset.id = ex.id;
     btn.title = `${ex.name} (${ex.view || 'front'} view)`;
 
     let tag = ex.view || 'front';
-    if (ex.mode === 'timer') tag = 'timer';
+    if (ex.mode === 'timer') tag = 'hold';
     if (ex.mode === 'manual') tag = 'manual';
 
     btn.innerHTML = `
-      <span class="ex-btn-icon">${ex.icon || '⚡'}</span>
+      <svg class="ex-btn-icon"><use href="#${ex.icon || 'i-dumbbell'}"/></svg>
       <span class="ex-btn-name">${ex.name}</span>
       <span class="ex-btn-tag">${tag}</span>
     `;
@@ -556,10 +594,12 @@ function initStartScreenExercisePicker() {
 
   EXERCISES.forEach(ex => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = `start-ex-btn ${currentExercise && ex.id === currentExercise.id ? 'active' : ''}`;
     btn.dataset.id = ex.id;
-    btn.innerHTML = `<span>${ex.icon || '⚡'}</span><span>${ex.name}</span>`;
-    btn.addEventListener('click', () => {
+    btn.innerHTML = `<svg><use href="#${ex.icon || 'i-dumbbell'}"/></svg><span>${ex.name}</span>`;
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
       selectExercise(ex.id);
     });
     startExerciseGrid.appendChild(btn);
@@ -570,16 +610,19 @@ function initStartScreenExercisePicker() {
 let currentActiveMuscleTab = 'all';
 
 function initExercisePicker() {
+  if (!muscleTabs) return;
   muscleTabs.innerHTML = '';
   MUSCLE_GROUPS.forEach(mg => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = `tab-btn ${mg.id === currentActiveMuscleTab ? 'active' : ''}`;
-    btn.textContent = `${mg.icon || ''} ${mg.name}`.trim();
+    btn.innerHTML = `<svg><use href="#${mg.icon}"/></svg><span>${mg.name}</span>`;
     btn.addEventListener('click', () => {
       currentActiveMuscleTab = mg.id;
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      renderExerciseList(mg.id);
+      const searchVal = catalogSearchInput ? catalogSearchInput.value : '';
+      renderExerciseList(mg.id, searchVal);
     });
     muscleTabs.appendChild(btn);
   });
@@ -587,38 +630,66 @@ function initExercisePicker() {
   renderExerciseList(currentActiveMuscleTab);
 }
 
-function renderExerciseList(muscleId) {
+function renderExerciseList(muscleId = 'all', searchQuery = '') {
+  if (!exerciseList) return;
   exerciseList.innerHTML = '';
-  const filtered = muscleId === 'all' 
+
+  const q = (searchQuery || '').toLowerCase().trim();
+
+  let filtered = muscleId === 'all' 
     ? EXERCISES 
     : EXERCISES.filter(e => e.muscle === muscleId);
 
+  if (q) {
+    filtered = filtered.filter(e => 
+      e.name.toLowerCase().includes(q) || 
+      e.muscle.toLowerCase().includes(q) ||
+      (e.tip && e.tip.toLowerCase().includes(q))
+    );
+  }
+
+  if (filtered.length === 0) {
+    exerciseList.innerHTML = `
+      <div class="log-empty">
+        <p>No movements found matching "${searchQuery}"</p>
+      </div>`;
+    return;
+  }
+
   filtered.forEach(ex => {
     const item = document.createElement('button');
-    item.className = `exercise-item ${ex.id === currentExercise.id ? 'selected' : ''}`;
+    item.type = 'button';
+    item.className = `exercise-item ${currentExercise && ex.id === currentExercise.id ? 'selected' : ''}`;
     
     let rangeBadge = '';
     if (ex.mode === 'timer') {
-      rangeBadge = `<span class="ex-badge angles">Timer</span>`;
+      rangeBadge = `<span class="ex-badge angles">Timer Hold</span>`;
     } else if (ex.mode === 'manual') {
-      rangeBadge = `<span class="ex-badge mode">Manual</span>`;
+      rangeBadge = `<span class="ex-badge mode">Manual Tally</span>`;
     } else {
       rangeBadge = `<span class="ex-badge angles">${ex.start}° → ${ex.end}°</span>`;
     }
 
     item.innerHTML = `
+      <div class="ex-card-icon">
+        <svg><use href="#${ex.icon || 'i-dumbbell'}"/></svg>
+      </div>
       <div class="ex-info">
         <span class="ex-name">${ex.name}</span>
         <div class="ex-tags">
-          <span class="ex-badge view">${ex.view}</span>
+          <span class="ex-badge view">${ex.view} view</span>
           ${rangeBadge}
         </div>
-        <span class="ex-tip">${ex.tip}</span>
+        <span class="ex-tip">${ex.tip || ''}</span>
       </div>
-      ${ex.id === currentExercise.id ? '<div class="ex-check"><svg><use href="#i-check"/></svg></div>' : ''}
+      ${currentExercise && ex.id === currentExercise.id 
+        ? '<div class="ex-check"><svg><use href="#i-check"/></svg></div>' 
+        : '<svg class="chevron-sm" style="width:14px;height:14px;color:var(--text-muted);"><use href="#i-chevron-right"/></svg>'}
     `;
 
-    item.addEventListener('click', () => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       selectExercise(ex.id);
       closeModal(exerciseModal);
     });
@@ -628,13 +699,30 @@ function renderExerciseList(muscleId) {
 }
 
 function openModal(modalEl) {
+  if (!modalEl) return;
   modalEl.style.display = 'flex';
   modalEl.setAttribute('aria-hidden', 'false');
+  void modalEl.offsetWidth; // Force reflow for silky smooth CSS transition
+  modalEl.classList.add('is-open');
+
+  if (modalEl === exerciseModal) {
+    if (catalogSearchInput) {
+      catalogSearchInput.value = '';
+      if (catalogClearSearch) catalogClearSearch.style.display = 'none';
+    }
+    renderExerciseList(currentActiveMuscleTab, '');
+  }
 }
 
 function closeModal(modalEl) {
-  modalEl.style.display = 'none';
-  modalEl.setAttribute('aria-hidden', 'true');
+  if (!modalEl) return;
+  modalEl.classList.remove('is-open');
+  setTimeout(() => {
+    if (!modalEl.classList.contains('is-open')) {
+      modalEl.style.display = 'none';
+      modalEl.setAttribute('aria-hidden', 'true');
+    }
+  }, 320);
 }
 
 // ---------------- Session Log Persistence (localStorage) ----------------
@@ -991,27 +1079,71 @@ function setupEventListeners() {
   });
 
   if (startChooseExBtn) {
-    startChooseExBtn.addEventListener('click', () => {
+    startChooseExBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       openModal(exerciseModal);
     });
   }
 
   // Toggle Exercise Navigation Bar
   if (toggleNavBtn && exerciseNavBar) {
-    toggleNavBtn.addEventListener('click', () => {
+    toggleNavBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       exerciseNavBar.classList.toggle('collapsed');
     });
   }
 
   // Exercise Picker
-  exerciseSelectBtn.addEventListener('click', () => {
-    openModal(exerciseModal);
-  });
-  closeExerciseBtn.addEventListener('click', () => {
-    closeModal(exerciseModal);
-  });
-  exerciseBackdrop.addEventListener('click', () => {
-    closeModal(exerciseModal);
+  if (exerciseSelectBtn) {
+    exerciseSelectBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openModal(exerciseModal);
+    });
+  }
+  if (closeExerciseBtn) {
+    closeExerciseBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal(exerciseModal);
+    });
+  }
+  if (exerciseBackdrop) {
+    exerciseBackdrop.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeModal(exerciseModal);
+    });
+  }
+
+  // Search in Exercise Catalog
+  if (catalogSearchInput) {
+    catalogSearchInput.addEventListener('input', () => {
+      const q = catalogSearchInput.value.trim();
+      if (catalogClearSearch) {
+        catalogClearSearch.style.display = q ? 'grid' : 'none';
+      }
+      renderExerciseList(currentActiveMuscleTab, q);
+    });
+  }
+  if (catalogClearSearch && catalogSearchInput) {
+    catalogClearSearch.addEventListener('click', () => {
+      catalogSearchInput.value = '';
+      catalogClearSearch.style.display = 'none';
+      renderExerciseList(currentActiveMuscleTab, '');
+      catalogSearchInput.focus();
+    });
+  }
+
+  // Escape key closes modals
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeModal(exerciseModal);
+      closeModal(finishSetModal);
+      closeModal(logModal);
+    }
   });
 
   // HUD Quick Action Buttons

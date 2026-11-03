@@ -6,7 +6,10 @@ Works natively in the **Web Browser (Mobile & PC)** and on **Desktop (Python Win
 
 ---
 
-## 🌟 Key Features
+## Key Features
+
+- **Gym-Grade Aesthetic & Vector Icons**: Bespoke obsidian dark mode design with glassmorphism, animated dual-ring HUD, and high-precision SVG vector iconography with zero emojis.
+- **Searchable Catalog & Floating Dock**: Instant search in the exercise catalog modal and a collapsible floating quick dock for switching movements mid-workout.
 
 - **Multi-Exercise Library**: Tracks 23 exercises across 7 muscle groups plus machine/cable manual mode.
 - **Biomechanical Angle & Visibility Tracking**:
@@ -175,3 +178,4 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\venv\Scripts\Activate.ps1
 python live.py
 ```
+
