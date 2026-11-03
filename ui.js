@@ -1,53 +1,78 @@
-// UI layer only: reads what app.js writes into the DOM and animates it.
+// ui.js - UI animations and reactive observers for RepVision
 (() => {
   const $ = id => document.getElementById(id);
   const card = $('counterCard'), count = $('repCount'), status = $('repStatus'),
         angle = $('angleBadge'), ring = $('ringFill'), mute = $('muteBtn'), overlay = $('startOverlay');
   const C = 339.3;
 
-  // Rep count: pop animation + ring flash on every change
+  if (!card || !count) return;
+
+  // Rep count: pop animation + card flash on every change
   let last = count.textContent;
   new MutationObserver(() => {
     const now = count.textContent;
     if (now === last) return;
     last = now;
     [count, card].forEach((el, i) => {
+      if (!el) return;
       const c = i ? 'flash' : 'bump';
-      el.classList.remove(c); void el.offsetWidth; el.classList.add(c);
+      el.classList.remove(c);
+      void el.offsetWidth;
+      el.classList.add(c);
     });
   }).observe(count, {childList: true, characterData: true, subtree: true});
 
-  // Angle: drives the ring (curl up = ring fills)
+  // Dynamic Ring Progress: driven by card.dataset.progress or angle
   new MutationObserver(() => {
+    if (!ring) return;
+    if (card.dataset.progress !== undefined) {
+      const p = parseFloat(card.dataset.progress);
+      if (!isNaN(p)) {
+        ring.style.strokeDashoffset = C * (1 - Math.max(0, Math.min(1, p)));
+        return;
+      }
+    }
+    // Fallback: parse angle if progress dataset isn't set
     const a = parseFloat((angle.textContent.match(/-?\d+(\.\d+)?/) || [])[0]);
     if (isNaN(a)) return;
     const p = Math.max(0, Math.min(1, (170 - a) / 130));
     ring.style.strokeDashoffset = C * (1 - p);
-  }).observe(angle, {childList: true, characterData: true, subtree: true});
+  }).observe(card, {attributes: true, attributeFilter: ['data-progress']});
 
-  // Status: keeps the dot, sets a state for colour
+  // Status: keeps the glowing dot, sets state for color
   let busy = false;
   new MutationObserver(() => {
-    if (busy) return; busy = true;
+    if (busy || !status) return;
+    busy = true;
     const t = status.textContent.trim();
     if (!status.querySelector('.dot')) {
       status.textContent = '';
       status.insertAdjacentHTML('afterbegin', '<i class="dot"></i>');
       status.append(t);
     }
-    card.dataset.state = /up|curl|top/i.test(t) ? 'up' : /down|extend/i.test(t) ? 'down' : 'idle';
+    if (/up|curl|top|logged/i.test(t)) {
+      card.dataset.state = 'up';
+    } else if (/down|extend|holding/i.test(t)) {
+      card.dataset.state = 'down';
+    } else {
+      card.dataset.state = 'idle';
+    }
     busy = false;
   }).observe(status, {childList: true, characterData: true, subtree: true});
 
-  // Mute button: if app.js writes an emoji, swap it for the SVG icon
+  // Mute button: if text emoji is inserted, swap it for the SVG icon
   let swapping = false;
   new MutationObserver(() => {
-    if (swapping || mute.querySelector('svg')) return; swapping = true;
+    if (swapping || !mute || mute.querySelector('svg')) return;
+    swapping = true;
     const off = /🔇|🔈|off|mute/i.test(mute.textContent) && !/🔊/.test(mute.textContent);
     mute.innerHTML = `<svg><use href="#i-${off ? 'mute' : 'vol'}"/></svg>`;
     swapping = false;
   }).observe(mute, {childList: true, characterData: true, subtree: true});
 
   // Overlay exit transition
-  $('startBtn').addEventListener('click', () => overlay.classList.add('is-leaving'));
+  const startBtn = $('startBtn');
+  if (startBtn && overlay) {
+    startBtn.addEventListener('click', () => overlay.classList.add('is-leaving'));
+  }
 })();

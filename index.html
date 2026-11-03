@@ -5,7 +5,7 @@
     <base href="./">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#0c0d0f">
-    <title>RepVision - AI Hammer Curl Rep Counter</title>
+    <title>RepVision - AI Workout Rep Counter</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
@@ -26,30 +26,60 @@
             <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4Zm12 0 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
             <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
             <symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+            <symbol id="i-tune" viewBox="0 0 24 24"><path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+            <symbol id="i-history" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+            <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+            <symbol id="i-close" viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+            <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2m-6 5v6m4-6v6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+            <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
         </defs>
     </svg>
 
     <div class="app-container">
+        <!-- Top Navigation -->
         <header class="header">
-            <div class="brand">
-                <span class="logo-icon"><svg><use href="#i-bolt"/></svg></span>
-                <span class="title">RepVision</span>
-                <span class="badge"><i></i>Live</span>
+            <div class="brand-group">
+                <div class="brand">
+                    <span class="logo-icon"><svg><use href="#i-bolt"/></svg></span>
+                    <span class="title">RepVision</span>
+                </div>
+                <!-- Exercise Selector Button -->
+                <button id="exerciseSelectBtn" class="exercise-pill" title="Select Exercise">
+                    <span class="exercise-pill-dot"></span>
+                    <span id="currentExerciseName" class="exercise-name">Hammer Curl</span>
+                    <svg class="chevron"><use href="#i-chevron-down"/></svg>
+                </button>
             </div>
+
             <div class="controls-top">
-                <button id="testAudioBtn" class="icon-btn" title="Test sound"><svg><use href="#i-bell"/></svg><span class="lbl">Test</span></button>
+                <button id="tuningBtn" class="icon-btn" title="Tuning Helper (d)"><svg><use href="#i-tune"/></svg><span class="lbl">Tune</span></button>
+                <button id="logBtn" class="icon-btn" title="Workout Log"><svg><use href="#i-history"/></svg><span class="lbl">Log</span></button>
+                <button id="testAudioBtn" class="icon-btn" title="Test sound"><svg><use href="#i-bell"/></svg></button>
                 <button id="cameraFlipBtn" class="icon-btn" title="Flip camera"><svg><use href="#i-flip"/></svg></button>
                 <button id="muteBtn" class="icon-btn" title="Toggle sound"><svg><use href="#i-vol"/></svg></button>
-                <button id="resetBtn" class="icon-btn danger" title="Reset counter"><svg><use href="#i-reset"/></svg><span class="lbl">Reset</span></button>
             </div>
         </header>
 
+        <!-- Viewport -->
         <div class="viewport" id="viewport">
             <video id="webcam" playsinline webkit-playsinline autoplay muted></video>
             <canvas id="output_canvas"></canvas>
             <div class="vignette"></div>
 
-            <!-- Counter HUD -->
+            <!-- Manual Mode Big Action Screen -->
+            <div id="manualOverlay" class="manual-overlay" style="display:none;">
+                <div class="manual-center-card">
+                    <span class="manual-badge">Manual Logging</span>
+                    <h3 id="manualExName">Exercise</h3>
+                    <div class="manual-count" id="manualRepDisplay">0</div>
+                    <button id="manualBigAddBtn" class="manual-big-btn">
+                        <span>+1 REP</span>
+                    </button>
+                    <p class="manual-tip">Tap button to log reps with voice and sound</p>
+                </div>
+            </div>
+
+            <!-- Counter HUD Card -->
             <div class="counter-card" id="counterCard" data-state="idle">
                 <div class="ring">
                     <svg viewBox="0 0 120 120">
@@ -57,32 +87,176 @@
                         <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="54"/>
                     </svg>
                     <div class="ring-core">
-                        <div class="counter-header">Reps</div>
+                        <div class="counter-header" id="counterHeaderLabel">Reps</div>
                         <div class="counter-number" id="repCount">0</div>
                     </div>
                 </div>
                 <div class="counter-meta">
+                    <div class="hud-exercise-title" id="hudExerciseTitle">Hammer Curl</div>
                     <div class="counter-status" id="repStatus"><i class="dot"></i>Ready</div>
                     <div class="angle-badge" id="angleBadge">Angle: --°</div>
                 </div>
+
+                <!-- HUD Quick Actions -->
+                <div class="hud-actions">
+                    <button id="addRepBtn" class="hud-btn ok" title="Add 1 rep">+1</button>
+                    <button id="undoRepBtn" class="hud-btn" title="Undo rep">↶</button>
+                    <button id="resetBtn" class="hud-btn danger" title="Reset counter">↺</button>
+                    <button id="finishSetBtn" class="hud-btn primary" title="Finish and log set">✓ Finish</button>
+                </div>
             </div>
 
-            <div class="hint">Extend past 150°, then curl below 60°</div>
+            <!-- Placement Hint -->
+            <div class="hint" id="placementHint">
+                <span class="hint-badge" id="hintViewBadge">Front</span>
+                <span id="hintText">Extend past 150°, then curl below 60°</span>
+            </div>
 
-            <!-- Start overlay -->
+            <!-- Start Workout Overlay -->
             <div class="start-overlay" id="startOverlay">
                 <svg class="bg-ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54"/></svg>
                 <div class="overlay-modal">
                     <div class="modal-icon"><svg><use href="#i-dumbbell"/></svg></div>
-                    <h2>Hammer curl counter</h2>
-                    <p>Stand back so both arms are in frame. Each full curl counts as one rep, with a sound on every count.</p>
-                    <button id="startBtn" class="primary-btn">Start workout</button>
+                    <h2 id="modalExerciseTitle">Hammer Curl</h2>
+                    <div class="modal-badge-row">
+                        <span class="view-tag" id="modalViewTag">Front view</span>
+                        <span class="muscle-tag" id="modalMuscleTag">Biceps</span>
+                    </div>
+                    <p id="modalTipText">Place phone at chest height in front of you. Each full curl counts as one rep, with a sound on every count.</p>
+                    <div class="start-btn-group">
+                        <button id="startBtn" class="primary-btn">Start workout</button>
+                        <button id="startChooseExBtn" class="secondary-btn">Change exercise</button>
+                    </div>
                     <span class="permission-note">Camera access is required. Video is processed on your device.</span>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Exercise Picker Modal (Bottom Sheet / Modal) -->
+    <div id="exerciseModal" class="modal-sheet" style="display:none;" aria-hidden="true">
+        <div class="sheet-backdrop" id="exerciseBackdrop"></div>
+        <div class="sheet-container">
+            <div class="sheet-header">
+                <div class="sheet-title-group">
+                    <h3>Select Exercise</h3>
+                    <span class="sheet-sub">Choose what you want to track</span>
+                </div>
+                <button id="closeExerciseBtn" class="sheet-close-btn" title="Close"><svg><use href="#i-close"/></svg></button>
+            </div>
+
+            <!-- Muscle Group Tabs -->
+            <div class="muscle-tabs" id="muscleTabs">
+                <!-- Dynamically populated by JS -->
+            </div>
+
+            <!-- Exercise List -->
+            <div class="exercise-list" id="exerciseList">
+                <!-- Dynamically populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Finish Set Modal -->
+    <div id="finishSetModal" class="modal-sheet" style="display:none;" aria-hidden="true">
+        <div class="sheet-backdrop" id="finishBackdrop"></div>
+        <div class="sheet-container finish-container">
+            <div class="sheet-header">
+                <div class="sheet-title-group">
+                    <h3>Finish Set</h3>
+                    <span class="sheet-sub" id="finishSetSub">Log completed set</span>
+                </div>
+                <button id="closeFinishBtn" class="sheet-close-btn" title="Close"><svg><use href="#i-close"/></svg></button>
+            </div>
+            <div class="finish-body">
+                <div class="finish-stats">
+                    <div class="stat-box">
+                        <span class="stat-lbl" id="finishStatLbl">Reps Done</span>
+                        <span class="stat-val" id="finishRepsVal">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-lbl">Tracking</span>
+                        <span class="stat-val" id="finishModeVal">AI Camera</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="setWeightInput">Weight (optional)</label>
+                    <div class="input-with-unit">
+                        <input type="number" id="setWeightInput" placeholder="0" min="0" max="999" step="0.5">
+                        <span class="unit">kg / lbs</span>
+                    </div>
+                </div>
+
+                <div class="finish-actions">
+                    <button id="confirmSaveSetBtn" class="primary-btn">Save to Today's Log</button>
+                    <button id="discardSetBtn" class="secondary-btn">Discard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workout Log Modal (Today's Sets) -->
+    <div id="logModal" class="modal-sheet" style="display:none;" aria-hidden="true">
+        <div class="sheet-backdrop" id="logBackdrop"></div>
+        <div class="sheet-container log-container">
+            <div class="sheet-header">
+                <div class="sheet-title-group">
+                    <h3>Today's Workout</h3>
+                    <span class="sheet-sub" id="logSummaryText">0 sets completed</span>
+                </div>
+                <button id="closeLogBtn" class="sheet-close-btn" title="Close"><svg><use href="#i-close"/></svg></button>
+            </div>
+            <div class="log-body">
+                <div id="logItemsList" class="log-items-list">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="log-footer">
+                    <button id="clearAllLogsBtn" class="danger-outline-btn">Clear Today's Log</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tuning Panel (collapsible debug helper) -->
+    <div id="tuningPanel" class="tuning-panel" style="display:none;">
+        <div class="tuning-header">
+            <span class="tuning-title">Angle Tuning & Debug</span>
+            <button id="closeTuningBtn" class="tuning-close-btn"><svg><use href="#i-close"/></svg></button>
+        </div>
+        <div class="tuning-body">
+            <div class="tune-metrics">
+                <div class="metric"><span class="m-lbl">Angle</span><span class="m-val" id="tuneAngle">--°</span></div>
+                <div class="metric"><span class="m-lbl">Stage</span><span class="m-val" id="tuneStage">idle</span></div>
+                <div class="metric"><span class="m-lbl">FPS</span><span class="m-val" id="tuneFps">--</span></div>
+                <div class="metric"><span class="m-lbl">Side</span><span class="m-val" id="tuneSide">--</span></div>
+            </div>
+            <div class="tune-visibilities">
+                <span class="vis-title">Joint Visibility (L / R)</span>
+                <div id="tuneJointsVis" class="vis-grid">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            <div class="tune-inputs">
+                <div class="tune-field">
+                    <label for="tuneStart">Start Angle (extended)</label>
+                    <input type="number" id="tuneStart" min="0" max="220" step="1">
+                </div>
+                <div class="tune-field">
+                    <label for="tuneEnd">End Angle (contracted)</label>
+                    <input type="number" id="tuneEnd" min="0" max="220" step="1">
+                </div>
+            </div>
+            <div class="tune-actions">
+                <button id="tuneSaveBtn" class="tune-btn primary">Save Override</button>
+                <button id="tuneResetBtn" class="tune-btn">Reset Defaults</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App scripts in correct dependency order -->
+    <script src="exercises.js"></script>
+    <script src="counter.js"></script>
     <script src="app.js"></script>
     <script src="ui.js"></script>
 </body>
