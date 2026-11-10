@@ -25,6 +25,12 @@ Works natively in the **Web Browser (Mobile & PC)** and on **Desktop (Python Win
   - Set personal target reps (e.g. 8, 10, 12, 15, 20) or hold duration.
   - **Upload Motivation Audio**: Upload your personal favorite hype track, song clip, or motivational chant (.mp3, .wav, .m4a, .ogg) that automatically celebrates reaching your goal.
   - Bell chime + real-time speech vocal counting on every rep.
+- **Smart Auto-Rest Timer (GymMane Inspired)**:
+  - Circular radial countdown ring with customizable rest intervals and quick preset chips (`30s`, `60s`, `90s`, `120s`, `180s`, `+/-15s`).
+  - **Auto-Rest Trigger**: Automatically kicks off when you log a completed set or hit your target goal.
+  - **Floating Rest Pill**: Minimizes into a discreet live-ticking floating badge so you can check your form, drink water, or browse exercises during recovery.
+  - **Resonant Gym Gong Audio**: Plays a deep harmonic bronze athletic bell, triggers speech synthesis cues (*"Rest complete, let's crush the next set!"*), and sends haptic vibration pulses on supported mobile devices.
+  - Keyboard shortcut `r` to toggle at any time.
 - **Biomechanical Exercise Animation Engine (GymMane Inspired)**:
   - Procedural vector kinematic mannequin demonstrating proper exercise technique, active joint angles, movement phases, and sightline guidance across all 26 movements.
   - Real-time animated demonstration on the Start Screen and mid-workout Form Guide modal.

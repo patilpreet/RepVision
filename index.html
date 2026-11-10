@@ -81,6 +81,15 @@
                 <path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6" fill="none"
                     stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
             </symbol>
+            <symbol id="i-timer" viewBox="0 0 24 24">
+                <circle cx="12" cy="13" r="8" fill="none" stroke="currentColor" stroke-width="1.8" />
+                <path d="M12 9v4l2.5 2.5M10 2h4M19 6l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-minimize" viewBox="0 0 24 24">
+                <path d="M4 14h6v6m0-6-7 7m17-7h-6V4m0 6 7-7" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
             <symbol id="i-history" viewBox="0 0 24 24">
                 <path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" fill="none" stroke="currentColor"
                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
@@ -316,6 +325,7 @@
             <div class="controls-top">
                 <button id="formGuideBtn" class="icon-btn" type="button" title="Exercise Form Demonstration"><svg><use href="#i-motion"/></svg><span class="lbl">Demo</span></button>
                 <button id="goalBtn" class="icon-btn" type="button" title="Set Goal & Motivation Sound"><svg><use href="#i-target"/></svg><span class="lbl">Goal</span></button>
+                <button id="restTimerBtn" class="icon-btn" type="button" title="Rest Timer (t)"><svg><use href="#i-timer"/></svg><span class="lbl">Rest</span></button>
                 <button id="tuningBtn" class="icon-btn" type="button" title="Tuning Helper (d)"><svg>
                         <use href="#i-tune" />
                     </svg><span class="lbl">Tune</span></button>
@@ -430,6 +440,24 @@
                     <span id="hintViewText">Front</span>
                 </span>
                 <span id="hintText">Extend past 150°, then curl below 60°</span>
+            </div>
+
+            <!-- Floating Minimized Rest Timer Pill -->
+            <div id="floatingRestBadge" class="floating-rest-badge" style="display:none;" role="status" aria-label="Rest timer running" title="Tap to expand Rest Timer">
+                <div class="mini-rest-ring">
+                    <svg viewBox="0 0 36 36">
+                        <circle class="mini-ring-bg" cx="18" cy="18" r="14" />
+                        <circle class="mini-ring-fill" id="miniRingFill" cx="18" cy="18" r="14" />
+                    </svg>
+                    <span class="mini-rest-num" id="miniRestNum">60</span>
+                </div>
+                <div class="mini-rest-info">
+                    <span class="mini-rest-lbl">RESTING</span>
+                    <span class="mini-rest-sub" id="miniRestSub">Next: Hammer Curl</span>
+                </div>
+                <button type="button" class="mini-rest-skip-btn" id="miniRestSkipBtn" title="Dismiss Rest">
+                    <svg><use href="#i-close"/></svg>
+                </button>
             </div>
 
             <!-- Start Workout Hero Screen -->
@@ -732,6 +760,68 @@
                 <button type="button" id="saveGoalBtn" class="primary-btn" style="margin-top:4px;">
                     <span>SAVE & CLOSE</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rest Timer Modal (GymMane Style Radial Countdown) -->
+    <div id="restTimerModal" class="modal-sheet" style="display:none;" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="sheet-backdrop" id="restBackdrop"></div>
+        <div class="sheet-container rest-sheet-container">
+            <div class="sheet-drag-handle"></div>
+            <div class="sheet-header">
+                <div class="sheet-title-group">
+                    <h3>Rest Interval</h3>
+                    <span class="sheet-sub" id="restNextExerciseLbl">Recovery before next set</span>
+                </div>
+                <div class="sheet-actions-group">
+                    <button id="minimizeRestBtn" class="sheet-close-btn" type="button" title="Minimize to floating pill">
+                        <svg><use href="#i-minimize"/></svg>
+                    </button>
+                    <button id="closeRestBtn" class="sheet-close-btn" type="button" title="Dismiss Rest">
+                        <svg><use href="#i-close"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="rest-modal-body">
+                <!-- Circular Radial Countdown Progress -->
+                <div class="rest-radial-wrap">
+                    <svg class="rest-radial-ring" viewBox="0 0 200 200">
+                        <circle class="rest-ring-bg" cx="100" cy="100" r="86" />
+                        <circle class="rest-ring-track" cx="100" cy="100" r="86" />
+                        <circle class="rest-ring-fill" id="restRingFill" cx="100" cy="100" r="86" />
+                    </svg>
+                    <div class="rest-radial-core">
+                        <span class="rest-digits" id="restTimeDigits">60</span>
+                        <span class="rest-unit-lbl">SECONDS REMAINING</span>
+                        <span class="rest-status-badge" id="restStatusBadge">RECOVERING</span>
+                    </div>
+                </div>
+
+                <!-- Preset Quick Time Chips -->
+                <div class="rest-presets-row" role="group" aria-label="Rest duration presets">
+                    <button type="button" class="preset-chip" data-rest="30">30s</button>
+                    <button type="button" class="preset-chip active" data-rest="60">60s</button>
+                    <button type="button" class="preset-chip" data-rest="90">90s</button>
+                    <button type="button" class="preset-chip" data-rest="120">2m</button>
+                    <button type="button" class="preset-chip" data-rest="180">3m</button>
+                </div>
+
+                <!-- Adjuster Buttons -->
+                <div class="rest-adjust-row">
+                    <button type="button" class="rest-adj-btn" id="restMinus15Btn" title="Subtract 15 seconds">-15s</button>
+                    <button type="button" class="rest-adj-btn primary" id="restPauseResumeBtn" title="Pause / Resume countdown">Pause</button>
+                    <button type="button" class="rest-adj-btn" id="restPlus15Btn" title="Add 15 seconds">+15s</button>
+                </div>
+
+                <!-- Options & Dismiss -->
+                <div class="rest-footer-row">
+                    <label class="rest-toggle-label">
+                        <input type="checkbox" id="autoRestToggle" checked>
+                        <span>Auto-start rest after saving set</span>
+                    </label>
+                    <button type="button" class="rest-skip-btn" id="restSkipBtn">Skip Rest</button>
+                </div>
             </div>
         </div>
     </div>

@@ -1,61 +1,87 @@
-/* ==========================================================================
-   RepVision - Luxury Athletic Gym Software UI / UX Design System
-   Inspired by Apple Fitness+, Whoop, and Peloton
-   ========================================================================== */
+/* RepVision — minimal maximalism: pixel + serif + grotesk, one acid accent */
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=Pixelify+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  --bg-base: #07080a;
-  --bg-card: rgba(14, 17, 24, 0.76);
-  --bg-card-heavy: rgba(11, 14, 20, 0.96);
-  --bg-surface: rgba(255, 255, 255, 0.04);
-  --bg-surface-hover: rgba(255, 255, 255, 0.08);
-  --bg-surface-active: rgba(0, 240, 255, 0.12);
-
-  --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.16);
-  --line-focus: rgba(0, 240, 255, 0.45);
-
-  --text: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-
-  --cyan: #00f0ff;
-  --cyan-glow: rgba(0, 240, 255, 0.4);
-  --electric: #38bdf8;
-  --ok: #00f59b;
-  --ok-glow: rgba(0, 245, 155, 0.4);
-  --warn: #fbbf24;
-  --danger: #ff4d4d;
-  --violet: #818cf8;
-
-  --spring: cubic-bezier(0.16, 1, 0.3, 1);
-  --smooth: cubic-bezier(0.4, 0, 0.2, 1);
-
-  --sans: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --display: 'Syne', -apple-system, BlinkMacSystemFont, sans-serif;
-  --num: 'Space Grotesk', 'Barlow Condensed', monospace;
+  --bg: #0a0a0a;
+  --card: rgba(18, 18, 17, .72);
+  --card-h: rgba(13, 13, 12, .97);
+  --surf: rgba(255, 255, 255, .05);
+  --surf-h: rgba(255, 255, 255, .1);
+  --line: rgba(255, 255, 255, .1);
+  --line-s: rgba(255, 255, 255, .22);
+  --text: #f4f2ec;
+  --text2: #a6a39b;
+  --muted: #6f6c66;
+  --acc: #d9ff3f;
+  --acc-soft: rgba(217, 255, 63, .12);
+  --acc-line: rgba(217, 255, 63, .5);
+  --acc-glow: rgba(217, 255, 63, .35);
+  --danger: #ff5a47;
+  --cyan: var(--acc);
+  --ok: var(--acc);
+  --cyan-glow: var(--acc-glow);
+  --ok-glow: var(--acc-glow);
+  --text-secondary: var(--text2);
+  --text-muted: var(--muted);
+  --line-strong: var(--line-s);
+  --bg-surface: var(--surf);
+  --spring: cubic-bezier(.16, 1, .3, 1);
+  --smooth: cubic-bezier(.4, 0, .2, 1);
+  --sans: 'Inter Tight', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --serif: 'Instrument Serif', 'Times New Roman', serif;
+  --pix: 'Pixelify Sans', 'Courier New', monospace;
+  --display: var(--serif);
+  --num: var(--serif)
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent
 }
 
-html, body {
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .2) transparent
+}
+
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px
+}
+
+*::-webkit-scrollbar-button {
+  display: none
+}
+
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
+  background: transparent
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, .2);
+  border-radius: 99px
+}
+
+html,
+body {
   height: 100%;
   width: 100%;
-  background: var(--bg-base);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-font-smoothing: antialiased
 }
 
 svg {
-  display: block;
+  display: block
 }
 
 button {
@@ -64,132 +90,135 @@ button {
   cursor: pointer;
   border: 0;
   background: none;
-  outline: none;
+  outline: none
 }
 
 input {
   font: inherit;
   color: inherit;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--surf);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 10px 14px;
   outline: none;
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-}
-
-/* ==========================================================================
-   Thin Dark-Themed Scrollbars (No arrows, transparent track, rounded gray thumb)
-   ========================================================================== */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
-}
-
-*::-webkit-scrollbar,
-.start-exercise-grid::-webkit-scrollbar,
-.exercise-list::-webkit-scrollbar,
-.exercise-buttons-strip::-webkit-scrollbar,
-.finish-body::-webkit-scrollbar,
-.log-body::-webkit-scrollbar,
-.debug-panel::-webkit-scrollbar,
-.history-list::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-
-*::-webkit-scrollbar-button,
-.start-exercise-grid::-webkit-scrollbar-button,
-.exercise-list::-webkit-scrollbar-button,
-.exercise-buttons-strip::-webkit-scrollbar-button,
-.finish-body::-webkit-scrollbar-button,
-.log-body::-webkit-scrollbar-button,
-.debug-panel::-webkit-scrollbar-button,
-.history-list::-webkit-scrollbar-button {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-*::-webkit-scrollbar-track,
-.start-exercise-grid::-webkit-scrollbar-track,
-.exercise-list::-webkit-scrollbar-track,
-.exercise-buttons-strip::-webkit-scrollbar-track,
-.finish-body::-webkit-scrollbar-track,
-.log-body::-webkit-scrollbar-track,
-.debug-panel::-webkit-scrollbar-track,
-.history-list::-webkit-scrollbar-track {
-  background: transparent !important;
-}
-
-*::-webkit-scrollbar-thumb,
-.start-exercise-grid::-webkit-scrollbar-thumb,
-.exercise-list::-webkit-scrollbar-thumb,
-.exercise-buttons-strip::-webkit-scrollbar-thumb,
-.finish-body::-webkit-scrollbar-thumb,
-.log-body::-webkit-scrollbar-thumb,
-.debug-panel::-webkit-scrollbar-thumb,
-.history-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.22) !important;
-  border-radius: 999px !important;
-}
-
-*::-webkit-scrollbar-thumb:hover,
-.start-exercise-grid::-webkit-scrollbar-thumb:hover,
-.exercise-list::-webkit-scrollbar-thumb:hover,
-.exercise-buttons-strip::-webkit-scrollbar-thumb:hover,
-.finish-body::-webkit-scrollbar-thumb:hover,
-.log-body::-webkit-scrollbar-thumb:hover,
-.debug-panel::-webkit-scrollbar-thumb:hover,
-.history-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.38) !important;
-}
-
-*::-webkit-scrollbar-corner {
-  background: transparent !important;
+  transition: border-color .2s, background .2s
 }
 
 input:focus {
-  border-color: var(--cyan);
-  background: rgba(255, 255, 255, 0.09);
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.2);
+  border-color: var(--acc);
+  background: var(--surf-h)
 }
 
-/* Base App Layout */
+/* pixel voice: every small label, button and tag */
+.title::before,
+.icon-btn .lbl,
+.muscle-btn,
+.ex-btn,
+.ex-btn-tag,
+.counter-header,
+.counter-status,
+.hud-view-pill,
+.hud-goal-pill,
+.hud-btn,
+.hint-badge,
+.view-tag,
+.muscle-tag,
+.range-tag,
+.start-picker-title,
+.primary-btn,
+.secondary-btn,
+.manual-badge,
+.stat-lbl,
+.m-lbl,
+.target-label,
+.sound-label,
+.sound-tag,
+.target-val-badge,
+.start-chip,
+.preset-chip,
+.tab-btn,
+.ex-badge,
+.tuning-title,
+.tune-btn,
+.demo-tag,
+.demo-angle-pill,
+.demo-phase-lbl,
+.demo-angle-live,
+.sound-action-btn,
+.sound-badge-active,
+.danger-outline-btn,
+.unit,
+.unit-label,
+.custom-unit-text,
+.angle-badge,
+.vis-title,
+.tip-title {
+  font-family: var(--pix)
+}
+
+/* serif voice: titles and numbers */
+.overlay-modal h2,
+.sheet-title-group h3,
+.manual-center-card h3,
+.counter-number,
+.manual-count,
+.stat-val,
+.log-item-stat,
+.hud-exercise-title,
+.goal-highlight-val,
+.goal-card-title,
+.ex-name,
+.log-item-title,
+.exercise-name {
+  font-family: var(--serif);
+  font-weight: 400
+}
+
 .app-container {
   position: relative;
   height: 100dvh;
   width: 100%;
-  overflow: hidden;
+  overflow: hidden
 }
 
 .viewport {
   position: absolute;
   inset: 0;
   background: #000;
-  overflow: hidden;
+  overflow: hidden
 }
 
-#webcam, #output_canvas {
+#webcam,
+#output_canvas {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scaleX(-1);
+  transform: scaleX(-1)
 }
 
 .vignette {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(7, 8, 10, 0.82) 100%),
-              linear-gradient(180deg, rgba(7, 8, 10, 0.85) 0%, transparent 18%, transparent 70%, rgba(7, 8, 10, 0.94) 100%);
+  background: radial-gradient(circle at 50% 50%, transparent 45%, rgba(10, 10, 10, .8) 100%), linear-gradient(180deg, rgba(10, 10, 10, .85) 0, transparent 18%, transparent 68%, rgba(10, 10, 10, .94) 100%)
 }
 
-/* ==========================================================================
-   Header & Controls
-   ========================================================================== */
+/* glass surfaces */
+.brand,
+.exercise-pill,
+.controls-top,
+.counter-card,
+.hint {
+  background: var(--card);
+  border: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+  backdrop-filter: blur(22px) saturate(1.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .4)
+}
+
+/* header + logo */
 .header {
   position: absolute;
   z-index: 40;
@@ -199,111 +228,136 @@ input:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 8px
 }
 
 .brand-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: 99px;
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  backdrop-filter: blur(20px) saturate(1.4);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  gap: 9px;
+  padding: 6px 15px 6px 12px;
+  border-radius: 99px
+}
+
+.logo-icon {
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px
 }
 
 .logo-icon svg {
-  width: 18px;
-  height: 18px;
-  color: var(--cyan);
-  filter: drop-shadow(0 0 6px var(--cyan-glow));
+  display: none
+}
+
+.logo-icon::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--acc);
+  box-shadow: 0 0 0 3px var(--acc-soft), 0 0 14px var(--acc-glow)
 }
 
 .title {
-  font-family: var(--display);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  font-size: 15px;
-  text-transform: uppercase;
+  font-size: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  text-transform: none
+}
+
+.title::before {
+  content: "rep";
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -.01em
+}
+
+.title::after {
+  content: "vision";
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -.01em
 }
 
 .status-pulse {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: var(--ok);
-  box-shadow: 0 0 8px var(--ok);
-  animation: pulse-ring 2s infinite;
-}
-@keyframes pulse-ring {
-  0% { transform: scale(0.95); opacity: 0.8; }
-  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 12px var(--ok); }
-  100% { transform: scale(0.95); opacity: 0.8; }
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc);
+  animation: pulse 2s infinite
 }
 
-/* Exercise Selector Pill (Header) */
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(.9);
+    opacity: .7
+  }
+
+  50% {
+    transform: scale(1.35);
+    opacity: 1
+  }
+}
+
 .exercise-pill {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
   border-radius: 99px;
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  backdrop-filter: blur(20px) saturate(1.4);
   font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  transition: all 0.25s var(--smooth);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  font-weight: 600;
+  transition: all .25s var(--smooth)
 }
+
 .exercise-pill:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--line-focus);
-  transform: translateY(-1px);
+  border-color: var(--line-s);
+  transform: translateY(-1px)
 }
+
 .exercise-pill:active {
-  transform: scale(0.96);
+  transform: scale(.96)
 }
+
 .exercise-pill-icon svg {
   width: 16px;
   height: 16px;
-  color: var(--cyan);
+  color: var(--acc)
 }
+
 .exercise-name {
-  max-width: 130px;
+  max-width: 140px;
+  font-size: 17px;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis
 }
+
 .exercise-pill svg.chevron {
   width: 14px;
   height: 14px;
-  color: var(--text-secondary);
+  color: var(--text2)
 }
 
-/* Control Icon Buttons */
 .controls-top {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: 99px;
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  backdrop-filter: blur(20px) saturate(1.4);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  gap: 2px;
+  padding: 3px;
+  border-radius: 99px
 }
 
 .icon-btn {
@@ -311,61 +365,62 @@ input:focus {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  height: 34px;
-  min-width: 34px;
+  height: 32px;
+  min-width: 32px;
   padding: 0 10px;
   border-radius: 99px;
   font-size: 12px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  transition: all 0.2s var(--smooth);
+  color: var(--text2);
+  transition: all .2s var(--smooth)
 }
+
 .icon-btn svg {
   width: 16px;
   height: 16px;
-  transition: transform 0.2s var(--spring);
-}
-.icon-btn:hover {
-  background: rgba(255, 255, 255, 0.09);
-  color: var(--text);
-}
-.icon-btn:active svg {
-  transform: scale(0.85);
+  transition: transform .2s var(--spring)
 }
 
-/* ==========================================================================
-   Floating Quick Exercise Dock
-   ========================================================================== */
+.icon-btn:hover {
+  background: var(--surf-h);
+  color: var(--text)
+}
+
+.icon-btn:active svg {
+  transform: scale(.85)
+}
+
+/* exercise dock */
 .exercise-nav-bar {
   position: absolute;
   z-index: 38;
   top: max(58px, calc(env(safe-area-inset-top) + 52px));
   left: 12px;
   right: 12px;
-  background: var(--bg-card-heavy);
+  background: var(--card-h);
   border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 8px 12px;
+  border-radius: 18px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   gap: 7px;
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  backdrop-filter: blur(24px) saturate(1.4);
-  box-shadow: 0 12px 36px rgba(0,0,0,0.65);
-  transition: all 0.3s var(--spring);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, .6);
+  transition: all .3s var(--spring)
 }
 
 .exercise-nav-bar.collapsed {
-  padding: 6px 12px;
+  padding: 6px 10px
 }
+
 .exercise-nav-bar.collapsed .exercise-buttons-strip {
-  display: none;
+  display: none
 }
 
 .exercise-nav-header {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px
 }
 
 .muscle-strip {
@@ -373,145 +428,128 @@ input:focus {
   gap: 5px;
   overflow-x: auto;
   scrollbar-width: none;
-  -webkit-overflow-scrolling: touch;
-  flex: 1;
+  flex: 1
 }
-.muscle-strip::-webkit-scrollbar { display: none; }
+
+.muscle-strip::-webkit-scrollbar {
+  display: none
+}
 
 .muscle-btn {
-  height: 28px;
+  height: 26px;
   padding: 0 11px;
   border-radius: 99px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  font-size: 12px;
+  letter-spacing: .02em;
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text-secondary);
-  border: 1px solid transparent;
+  color: var(--text2);
+  border: 1px solid var(--line);
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  cursor: pointer;
-  transition: all 0.2s var(--smooth);
+  transition: all .2s var(--smooth)
 }
+
 .muscle-btn svg {
   width: 13px;
-  height: 13px;
-  color: currentColor;
+  height: 13px
 }
+
 .muscle-btn:hover {
   color: var(--text);
-  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--line-s)
 }
+
 .muscle-btn.active {
-  background: rgba(0, 240, 255, 0.12);
-  color: var(--cyan);
-  border-color: rgba(0, 240, 255, 0.4);
-  box-shadow: 0 0 14px rgba(0, 240, 255, 0.2);
+  background: var(--acc-soft);
+  color: var(--acc);
+  border-color: var(--acc-line)
 }
 
 .nav-toggle-btn {
   width: 28px;
   height: 28px;
-  border-radius: 8px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
-  color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.04);
-  transition: transform 0.25s var(--spring), background 0.2s, color 0.2s;
+  color: var(--text2);
+  border: 1px solid var(--line);
   flex-shrink: 0;
+  transition: transform .25s var(--spring), color .2s
 }
+
 .nav-toggle-btn:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.09);
+  color: var(--text)
 }
+
 .exercise-nav-bar.collapsed .nav-toggle-btn svg {
-  transform: rotate(-90deg);
+  transform: rotate(-90deg)
 }
 
 .exercise-buttons-strip {
   display: flex;
   gap: 7px;
   overflow-x: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
   padding-bottom: 3px;
-  -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-}
-.exercise-buttons-strip::-webkit-scrollbar {
-  height: 4px;
-}
-.exercise-buttons-strip::-webkit-scrollbar-button {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-.exercise-buttons-strip::-webkit-scrollbar-track {
-  background: transparent !important;
-}
-.exercise-buttons-strip::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.22) !important;
-  border-radius: 999px !important;
-}
-.exercise-buttons-strip::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.38) !important;
+  -webkit-overflow-scrolling: touch
 }
 
 .ex-btn {
-  height: 36px;
+  height: 34px;
   padding: 0 12px;
-  border-radius: 11px;
-  font-size: 12px;
-  font-weight: 700;
+  border-radius: 10px;
+  font-size: 13px;
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text);
   border: 1px solid var(--line);
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  cursor: pointer;
   flex-shrink: 0;
-  transition: transform 0.15s var(--spring), background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  transition: transform .15s var(--spring), background .2s, border-color .2s
 }
+
 .ex-btn svg.ex-btn-icon {
   width: 15px;
   height: 15px;
-  color: var(--cyan);
-}
-.ex-btn:hover {
-  background: rgba(255, 255, 255, 0.09);
-  border-color: var(--line-strong);
-  transform: translateY(-1px);
-}
-.ex-btn:active {
-  transform: scale(0.96);
-}
-.ex-btn.active {
-  background: rgba(0, 240, 255, 0.16);
-  color: #fff;
-  border-color: var(--cyan);
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.35);
-}
-.ex-btn-tag {
-  font-size: 9px;
-  font-weight: 800;
-  text-transform: uppercase;
-  padding: 2px 5px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.07);
-  color: var(--text-secondary);
-}
-.ex-btn.active .ex-btn-tag {
-  background: rgba(0, 240, 255, 0.35);
-  color: #fff;
+  color: var(--acc)
 }
 
-/* ==========================================================================
-   Workout Counter HUD (Gym Software Dual-Ring)
-   ========================================================================== */
+.ex-btn:hover {
+  background: var(--surf-h);
+  border-color: var(--line-s);
+  transform: translateY(-1px)
+}
+
+.ex-btn:active {
+  transform: scale(.96)
+}
+
+.ex-btn.active {
+  background: var(--acc);
+  color: #0a0a0a;
+  border-color: var(--acc)
+}
+
+.ex-btn.active svg.ex-btn-icon {
+  color: #0a0a0a
+}
+
+.ex-btn-tag {
+  font-size: 9px;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--surf-h);
+  color: var(--text2)
+}
+
+.ex-btn.active .ex-btn-tag {
+  background: rgba(0, 0, 0, .16);
+  color: #0a0a0a
+}
+
+/* counter HUD */
 .counter-card {
   position: absolute;
   z-index: 25;
@@ -521,55 +559,52 @@ input:focus {
   flex-wrap: wrap;
   align-items: center;
   gap: 16px;
-  padding: 12px 18px 12px 14px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
-  border-radius: 28px;
-  -webkit-backdrop-filter: blur(24px) saturate(1.5);
-  backdrop-filter: blur(24px) saturate(1.5);
-  box-shadow: 0 16px 48px rgba(0,0,0,0.55);
+  padding: 12px 18px 12px 12px;
+  border-radius: 30px;
   max-width: calc(100vw - 24px);
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: border-color .3s, box-shadow .3s
 }
 
 .ring-wrapper {
   position: relative;
-  width: 106px;
-  height: 106px;
-  flex-shrink: 0;
+  width: 104px;
+  height: 104px;
+  flex-shrink: 0
 }
+
 .hud-ring {
   width: 100%;
   height: 100%;
-  transform: rotate(-90deg);
+  transform: rotate(-90deg)
 }
+
 .hud-ring circle {
   fill: none;
-  stroke-linecap: round;
+  stroke-linecap: round
 }
+
 .ring-bg {
-  stroke: rgba(255, 255, 255, 0.03);
-  stroke-width: 7;
+  stroke: transparent;
+  stroke-width: 0
 }
+
 .ring-track {
-  stroke: rgba(255, 255, 255, 0.08);
-  stroke-width: 6;
+  stroke: rgba(255, 255, 255, .1);
+  stroke-width: 3
 }
+
 .ring-fill {
-  stroke: var(--cyan);
-  stroke-width: 6;
+  stroke: var(--acc);
+  stroke-width: 4;
   stroke-dasharray: 326.7;
   stroke-dashoffset: 326.7;
-  transition: stroke-dashoffset 0.12s linear, stroke 0.3s var(--smooth);
-  filter: drop-shadow(0 0 8px var(--cyan-glow));
+  transition: stroke-dashoffset .12s linear, stroke .3s;
+  filter: drop-shadow(0 0 6px var(--acc-glow))
 }
-.counter-card[data-state="up"] .ring-fill {
-  stroke: var(--ok);
-  filter: drop-shadow(0 0 10px var(--ok-glow));
-}
+
 .counter-card[data-state="down"] .ring-fill {
-  stroke: var(--cyan);
-  filter: drop-shadow(0 0 10px var(--cyan-glow));
+  stroke: var(--text);
+  filter: none
 }
 
 .ring-core {
@@ -578,155 +613,206 @@ input:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center
 }
+
 .counter-header {
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
+  letter-spacing: .16em;
+  color: var(--text2)
 }
+
 .counter-number {
-  font-family: var(--num);
-  font-weight: 700;
-  font-size: 48px;
-  line-height: 0.95;
-  color: #fff;
-  font-variant-numeric: tabular-nums;
-  transition: transform 0.2s var(--spring);
+  font-size: 58px;
+  line-height: .88;
+  color: var(--text);
+  font-variant-numeric: tabular-nums
 }
+
 .counter-number.bump {
-  animation: num-bloom 0.45s var(--spring);
+  animation: bloom .45s var(--spring)
 }
-@keyframes num-bloom {
-  0% { transform: scale(0.85); opacity: 0.7; filter: drop-shadow(0 0 18px var(--ok)); }
-  50% { transform: scale(1.16); opacity: 1; filter: drop-shadow(0 0 24px var(--ok)); }
-  100% { transform: scale(1); filter: none; }
+
+@keyframes bloom {
+  0% {
+    transform: scale(.85);
+    opacity: .7
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+    color: var(--acc)
+  }
+
+  100% {
+    transform: scale(1)
+  }
 }
 
 .counter-meta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  min-width: 100px;
+  gap: 5px;
+  min-width: 104px
 }
+
 .hud-title-row {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: wrap
 }
+
 .hud-exercise-title {
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  color: #fff;
-  text-transform: uppercase;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -.01em
 }
+
 .hud-view-pill {
-  font-size: 9px;
-  font-weight: 800;
+  font-size: 10px;
   padding: 1px 6px;
   border-radius: 4px;
-  background: rgba(0, 240, 255, 0.12);
-  color: var(--cyan);
-  text-transform: uppercase;
+  border: 1px solid var(--acc-line);
+  color: var(--acc);
+  text-transform: uppercase
 }
 
 .counter-status {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  color: var(--text);
+  letter-spacing: .1em
 }
+
 .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--text-secondary);
-  transition: background 0.25s, box-shadow 0.25s;
-}
-[data-state="up"] .dot {
-  background: var(--ok);
-  box-shadow: 0 0 8px var(--ok);
-}
-[data-state="down"] .dot {
-  background: var(--cyan);
-  box-shadow: 0 0 8px var(--cyan);
-}
-.angle-badge {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  font-variant-numeric: tabular-nums;
+  background: var(--muted);
+  transition: background .25s, box-shadow .25s
 }
 
-/* HUD Quick Action Buttons */
+[data-state="up"] .dot {
+  background: var(--acc);
+  box-shadow: 0 0 8px var(--acc)
+}
+
+[data-state="down"] .dot {
+  background: var(--text);
+  box-shadow: 0 0 8px rgba(255, 255, 255, .5)
+}
+
+.angle-badge {
+  font-size: 12px;
+  color: var(--text2);
+  font-variant-numeric: tabular-nums
+}
+
 .hud-actions {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-left: auto;
+  margin-left: auto
 }
+
 .hud-btn {
   height: 36px;
-  padding: 0 12px;
-  border-radius: 12px;
+  padding: 0 13px;
+  border-radius: 99px;
   font-size: 12px;
-  font-weight: 700;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text);
   border: 1px solid var(--line);
-  transition: all 0.2s var(--smooth);
-}
-.hud-btn svg.btn-icon {
-  width: 14px;
-  height: 14px;
-}
-.hud-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--line-strong);
-}
-.hud-btn:active {
-  transform: scale(0.94);
-}
-.hud-btn.ok {
-  background: rgba(0, 245, 155, 0.14);
-  border-color: rgba(0, 245, 155, 0.35);
-  color: var(--ok);
-}
-.hud-btn.ok:hover {
-  background: rgba(0, 245, 155, 0.24);
-  box-shadow: 0 0 14px rgba(0, 245, 155, 0.25);
-}
-.hud-btn.primary {
-  background: var(--cyan);
-  color: #07080a;
-  border-color: transparent;
-  font-weight: 800;
-}
-.hud-btn.primary:hover {
-  background: #4ef4ff;
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
-}
-.hud-btn.danger {
-  background: rgba(255, 77, 77, 0.12);
-  border-color: rgba(255, 77, 77, 0.3);
-  color: var(--danger);
-}
-.hud-btn.danger:hover {
-  background: rgba(255, 77, 77, 0.22);
+  transition: all .2s var(--smooth)
 }
 
-/* ==========================================================================
-   Motion Guidance Pill
-   ========================================================================== */
+.hud-btn svg.btn-icon {
+  width: 14px;
+  height: 14px
+}
+
+.hud-btn:hover {
+  background: var(--surf-h);
+  border-color: var(--line-s)
+}
+
+.hud-btn:active {
+  transform: scale(.94)
+}
+
+.hud-btn.ok {
+  background: var(--acc-soft);
+  border-color: var(--acc-line);
+  color: var(--acc)
+}
+
+.hud-btn.primary {
+  background: var(--acc);
+  color: #0a0a0a;
+  border-color: transparent
+}
+
+.hud-btn.primary:hover {
+  box-shadow: 0 0 18px var(--acc-glow)
+}
+
+.hud-btn.danger {
+  border-color: rgba(255, 90, 71, .35);
+  color: var(--danger)
+}
+
+.hud-btn.danger:hover {
+  background: rgba(255, 90, 71, .14)
+}
+
+.hud-goal-pill {
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+  color: var(--text2);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .2s
+}
+
+.hud-goal-pill:hover {
+  color: var(--text);
+  border-color: var(--line-s)
+}
+
+.hud-goal-pill.achieved {
+  background: var(--acc);
+  color: #0a0a0a;
+  border-color: var(--acc);
+  box-shadow: 0 0 12px var(--acc-glow)
+}
+
+.counter-card.goal-achieved {
+  animation: goal .9s var(--spring);
+  border-color: var(--acc-line) !important;
+  box-shadow: 0 0 40px var(--acc-glow) !important
+}
+
+@keyframes goal {
+  0% {
+    transform: scale(.95)
+  }
+
+  50% {
+    transform: scale(1.04)
+  }
+
+  100% {
+    transform: scale(1)
+  }
+}
+
 .hint {
   position: absolute;
   z-index: 20;
@@ -735,42 +821,36 @@ input:focus {
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   white-space: nowrap;
   font-size: 12px;
-  font-weight: 700;
-  color: var(--text-secondary);
+  font-weight: 500;
+  color: var(--text2);
   padding: 8px 16px;
-  background: var(--bg-card);
-  border: 1px solid var(--line);
   border-radius: 99px;
-  -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.45);
   max-width: calc(100vw - 32px);
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis
 }
+
 .hint-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-size: 10px;
-  font-weight: 800;
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: rgba(0, 240, 255, 0.15);
-  color: var(--cyan);
-  text-transform: uppercase;
-}
-.hint-icon {
-  width: 12px;
-  height: 12px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--acc-soft);
+  color: var(--acc);
+  text-transform: uppercase
 }
 
-/* ==========================================================================
-   Start Workout Screen (Gymane Minimalist Aesthetic)
-   ========================================================================== */
+.hint-icon {
+  width: 12px;
+  height: 12px
+}
+
+/* start screen */
 .start-overlay {
   position: absolute;
   inset: 0;
@@ -779,17 +859,18 @@ input:focus {
   align-items: center;
   justify-content: center;
   padding: 16px;
-  background: radial-gradient(ellipse at 50% 25%, rgba(18, 22, 32, 0.95), rgba(7, 8, 10, 0.98) 75%);
-  -webkit-backdrop-filter: blur(32px);
-  backdrop-filter: blur(32px);
+  background: radial-gradient(ellipse at 50% 20%, rgba(26, 26, 24, .96), rgba(10, 10, 10, .99) 75%);
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
   overflow-y: auto;
-  transition: opacity 0.45s var(--smooth), visibility 0.45s, transform 0.45s var(--spring);
+  transition: opacity .45s var(--smooth), visibility .45s, transform .45s var(--spring)
 }
+
 .start-overlay.is-leaving {
   opacity: 0;
   visibility: hidden;
   transform: scale(1.04);
-  pointer-events: none;
+  pointer-events: none
 }
 
 .overlay-modal {
@@ -797,197 +878,347 @@ input:focus {
   max-width: 440px;
   width: 100%;
   margin: auto;
-  background: rgba(13, 16, 23, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 28px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
-  -webkit-backdrop-filter: blur(28px);
-  backdrop-filter: blur(28px);
-  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  padding: 26px 22px;
+  padding: 28px 22px;
+  text-align: center;
+  background: rgba(16, 16, 15, .88);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .8)
 }
 
 .modal-hero-badge {
   position: relative;
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
-  color: var(--cyan);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  color: var(--acc);
+  border: 1px solid var(--line-s);
+  box-shadow: 0 0 0 5px var(--surf)
 }
+
 .hero-icon {
   width: 26px;
-  height: 26px;
+  height: 26px
 }
+
 .hero-ring-glow {
-  display: none;
+  display: none
+}
+
+.overlay-modal h2 {
+  font-size: 44px;
+  line-height: .98;
+  letter-spacing: -.02em;
+  margin-top: 4px
+}
+
+.overlay-modal p {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text2);
+  max-width: 380px
 }
 
 .modal-badge-row {
   display: flex;
   gap: 6px;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: wrap
 }
-.view-tag, .muscle-tag, .range-tag {
+
+.view-tag,
+.muscle-tag,
+.range-tag {
   font-size: 11px;
-  font-weight: 600;
   padding: 3px 10px;
   border-radius: 99px;
-  letter-spacing: 0.02em;
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  border: 1px solid var(--line);
+  color: var(--text2)
 }
-.view-tag {
-  background: rgba(255, 255, 255, 0.06);
-  color: #cbd5e1;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
+
 .tag-icon {
   width: 12px;
   height: 12px;
-  color: var(--cyan);
+  color: var(--acc)
 }
+
 .muscle-tag {
-  background: rgba(255, 255, 255, 0.04);
-  color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  text-transform: capitalize;
+  text-transform: capitalize
 }
+
 .range-tag {
-  background: rgba(0, 245, 155, 0.1);
-  color: var(--ok);
-  border: 1px solid rgba(0, 245, 155, 0.22);
-  font-variant-numeric: tabular-nums;
+  color: var(--acc);
+  border-color: var(--acc-line);
+  font-variant-numeric: tabular-nums
 }
 
-.overlay-modal h2 {
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: #fff;
-  margin-top: 2px;
-}
-.overlay-modal p {
-  font-size: 13px;
-  line-height: 1.5;
-  color: #8b95a5;
-  max-width: 380px;
-  margin: 2px 0 4px;
+.start-target-card {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 11px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  text-align: left
 }
 
-/* Quick Pick Section on Start Screen */
+.target-card-row {
+  display: flex;
+  flex-direction: column;
+  gap: 7px
+}
+
+.target-card-row.sound-row {
+  border-top: 1px solid var(--line);
+  padding-top: 9px
+}
+
+.target-title-bar,
+.sound-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px
+}
+
+.target-icon,
+.sound-icon {
+  width: 13px;
+  height: 13px;
+  color: var(--acc)
+}
+
+.target-label,
+.sound-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text2);
+  letter-spacing: .1em
+}
+
+.target-val-badge,
+.sound-tag {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--acc);
+  border: 1px solid var(--acc-line);
+  padding: 0 7px;
+  border-radius: 99px
+}
+
+.start-goal-chips {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-wrap: wrap
+}
+
+.start-chip,
+.preset-chip {
+  height: 28px;
+  min-width: 34px;
+  padding: 0 9px;
+  border-radius: 99px;
+  font-size: 12px;
+  color: var(--text2);
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  transition: all .18s var(--smooth)
+}
+
+.preset-chip {
+  height: 32px;
+  min-width: 42px
+}
+
+.start-chip:hover,
+.preset-chip:hover {
+  color: var(--text);
+  border-color: var(--line-s)
+}
+
+.start-chip.active,
+.preset-chip.active {
+  background: var(--acc);
+  color: #0a0a0a;
+  border-color: var(--acc)
+}
+
+.start-custom-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto
+}
+
+#startCustomGoalInput {
+  width: 50px;
+  height: 28px;
+  padding: 0 4px;
+  border-radius: 99px;
+  font-size: 12px;
+  text-align: center
+}
+
+.custom-unit-text {
+  font-size: 11px;
+  color: var(--muted)
+}
+
+.start-sound-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 6px 10px
+}
+
+.sound-name-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px
+}
+
+.sound-mini-btns {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-shrink: 0
+}
+
+.sound-mini-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--text2);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all .18s var(--smooth)
+}
+
+.sound-mini-btn svg {
+  width: 12px;
+  height: 12px
+}
+
+.sound-mini-btn:hover {
+  color: var(--text);
+  border-color: var(--line-s)
+}
+
+.sound-mini-btn.upload:hover {
+  color: var(--acc);
+  border-color: var(--acc-line)
+}
+
+.sound-mini-btn.remove:hover {
+  color: var(--danger);
+  border-color: rgba(255, 90, 71, .4)
+}
+
 .start-carousel-section {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  text-align: left;
+  text-align: left
 }
+
 .start-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2px;
+  padding: 0 2px
 }
+
 .start-picker-title {
-  font-size: 10px;
-  font-weight: 800;
+  font-size: 11px;
   text-transform: uppercase;
-  color: #64748b;
-  letter-spacing: 0.08em;
+  color: var(--text2);
+  letter-spacing: .12em
 }
+
 .start-picker-sub {
-  font-size: 10px;
-  color: #475569;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--muted)
 }
+
 .start-exercise-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 7px;
+  gap: 6px;
   max-height: 165px;
   overflow-y: auto;
-  padding: 8px;
+  padding: 7px;
   border-radius: 16px;
-  background: rgba(0, 0, 0, 0.32);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
-}
-.start-exercise-grid::-webkit-scrollbar {
-  width: 5px;
-}
-.start-exercise-grid::-webkit-scrollbar-button {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-.start-exercise-grid::-webkit-scrollbar-track {
-  background: transparent !important;
-}
-.start-exercise-grid::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.22) !important;
-  border-radius: 999px !important;
-}
-.start-exercise-grid::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.38) !important;
+  border: 1px solid var(--line);
+  overscroll-behavior: contain
 }
 
 .start-ex-btn {
-  height: 38px;
+  height: 36px;
   padding: 0 11px;
-  border-radius: 11px;
+  border-radius: 10px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.035);
-  color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text2);
+  border: 1px solid var(--line);
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  cursor: pointer;
   overflow: hidden;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all .2s var(--spring)
 }
+
 .start-ex-btn span {
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
   flex: 1;
-  text-align: left;
+  text-align: left
 }
+
 .start-ex-btn svg {
   width: 15px;
   height: 15px;
-  color: #64748b;
+  color: var(--muted);
   flex-shrink: 0;
-  transition: color 0.2s;
+  transition: color .2s
 }
+
 .start-ex-btn:hover {
-  background: rgba(255, 255, 255, 0.07);
-  color: #f1f5f9;
-  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text);
+  border-color: var(--line-s)
 }
+
 .start-ex-btn.active {
-  background: rgba(0, 240, 255, 0.12);
-  color: #ffffff;
-  border-color: rgba(0, 240, 255, 0.45);
-  box-shadow: 0 0 14px rgba(0, 240, 255, 0.16);
+  background: var(--acc-soft);
+  color: var(--text);
+  border-color: var(--acc-line)
 }
+
 .start-ex-btn.active svg {
-  color: var(--cyan);
+  color: var(--acc)
 }
 
 .start-btn-group {
@@ -995,40 +1226,43 @@ input:focus {
   flex-direction: column;
   width: 100%;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 4px
 }
 
 .primary-btn {
-  height: 48px;
+  height: 50px;
   width: 100%;
   padding: 0 24px;
   border-radius: 99px;
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  background: linear-gradient(135deg, #00f0ff 0%, #00e5a3 100%);
-  color: #06090e;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  background: var(--acc);
+  color: #0a0a0a;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: transform 0.2s var(--spring), box-shadow 0.2s;
-  box-shadow: 0 4px 20px rgba(0, 240, 255, 0.26);
+  transition: transform .2s var(--spring), box-shadow .2s
 }
+
 .primary-btn svg.btn-arrow {
   width: 16px;
   height: 16px;
-  transition: transform 0.2s var(--spring);
+  transition: transform .2s var(--spring)
 }
+
 .primary-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 28px rgba(0, 240, 255, 0.38);
+  box-shadow: 0 8px 30px var(--acc-glow)
 }
+
 .primary-btn:hover svg.btn-arrow {
-  transform: translateX(3px);
+  transform: translateX(3px)
 }
+
 .primary-btn:active {
-  transform: scale(0.97);
+  transform: scale(.97)
 }
 
 .secondary-btn {
@@ -1036,44 +1270,38 @@ input:focus {
   width: 100%;
   padding: 0 20px;
   border-radius: 99px;
-  font-weight: 600;
   font-size: 13px;
-  background: rgba(255, 255, 255, 0.04);
-  color: #cbd5e1;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  letter-spacing: .04em;
+  color: var(--text2);
+  border: 1px solid var(--line-s);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.2s var(--smooth);
+  transition: all .2s var(--smooth)
 }
+
 .secondary-btn svg.btn-icon {
   width: 15px;
-  height: 15px;
-  color: #94a3b8;
-  transition: color 0.2s;
+  height: 15px
 }
+
 .secondary-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.16);
-  color: #fff;
+  color: var(--text);
+  background: var(--surf)
 }
-.secondary-btn:hover svg.btn-icon {
-  color: var(--cyan);
-}
+
 .secondary-btn:active {
-  transform: scale(0.97);
+  transform: scale(.97)
 }
 
 .permission-note {
   font-size: 11px;
-  color: #505869;
-  line-height: 1.4;
+  color: var(--muted);
+  line-height: 1.4
 }
 
-/* ==========================================================================
-   Exercise Catalog Modal & Bottom Sheet (High-End Gym Drawer)
-   ========================================================================== */
+/* sheets */
 .modal-sheet {
   position: fixed;
   inset: 0;
@@ -1084,21 +1312,21 @@ input:focus {
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s var(--smooth), visibility 0.3s;
+  transition: opacity .3s var(--smooth), visibility .3s
 }
 
 .modal-sheet.is-open {
   pointer-events: auto;
   opacity: 1;
-  visibility: visible;
+  visibility: visible
 }
 
 .sheet-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.78);
+  background: rgba(0, 0, 0, .78);
   -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px)
 }
 
 .sheet-container {
@@ -1107,31 +1335,36 @@ input:focus {
   width: 100%;
   max-width: 680px;
   max-height: 85dvh;
-  background: var(--bg-card-heavy);
+  background: var(--card-h);
   border: 1px solid var(--line);
-  border-radius: 28px 28px 0 0;
+  border-radius: 26px 26px 0 0;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 -16px 48px rgba(0, 0, 0, 0.75);
+  box-shadow: 0 -16px 48px rgba(0, 0, 0, .75);
   transform: translateY(100%);
-  transition: transform 0.38s var(--spring);
+  transition: transform .38s var(--spring)
 }
 
 .modal-sheet.is-open .sheet-container {
-  transform: translateY(0);
+  transform: translateY(0)
 }
 
-@media (min-width: 641px) {
+@media (min-width:641px) {
   .modal-sheet {
-    align-items: center;
+    align-items: center
   }
+
   .sheet-container {
     border-radius: 24px;
-    transform: scale(0.94) translateY(20px);
-    transition: transform 0.35s var(--spring);
+    transform: scale(.94) translateY(20px)
   }
+
   .modal-sheet.is-open .sheet-container {
-    transform: scale(1) translateY(0);
+    transform: none
+  }
+
+  .sheet-drag-handle {
+    display: none
   }
 }
 
@@ -1139,11 +1372,8 @@ input:focus {
   width: 36px;
   height: 4px;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.2);
-  margin: 10px auto 4px;
-}
-@media (min-width: 641px) {
-  .sheet-drag-handle { display: none; }
+  background: rgba(255, 255, 255, .2);
+  margin: 10px auto 4px
 }
 
 .sheet-header {
@@ -1151,148 +1381,135 @@ input:focus {
   justify-content: space-between;
   align-items: center;
   padding: 14px 22px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--line)
 }
+
 .sheet-title-group h3 {
-  font-family: var(--display);
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -.02em
 }
+
 .sheet-sub {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--text2)
 }
+
 .sheet-close-btn {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-secondary);
-  transition: all 0.2s var(--smooth);
-}
-.sheet-close-btn svg {
-  width: 15px;
-  height: 15px;
-}
-.sheet-close-btn:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.14);
+  color: var(--text2);
+  border: 1px solid var(--line);
+  transition: all .2s
 }
 
-/* Catalog Search Bar */
+.sheet-close-btn svg {
+  width: 15px;
+  height: 15px
+}
+
+.sheet-close-btn:hover {
+  color: var(--text);
+  border-color: var(--line-s)
+}
+
 .catalog-search-bar {
   display: flex;
   align-items: center;
   gap: 10px;
   margin: 12px 18px 4px;
   padding: 0 14px;
-  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  border-radius: 99px;
+  transition: border-color .2s
 }
+
 .catalog-search-bar:focus-within {
-  border-color: var(--cyan);
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.2);
+  border-color: var(--acc)
 }
+
 .catalog-search-bar svg.search-icon {
   width: 16px;
   height: 16px;
-  color: var(--text-secondary);
+  color: var(--text2)
 }
+
 .catalog-search-bar input {
   flex: 1;
   background: none;
   border: 0;
   padding: 12px 0;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500
 }
-.catalog-search-bar input:focus {
-  box-shadow: none;
-}
+
 .clear-search-btn {
   width: 20px;
   height: 20px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: var(--text-muted);
+  color: var(--muted)
 }
-.clear-search-btn svg { width: 12px; height: 12px; }
 
-/* Muscle Tabs inside Modal */
+.clear-search-btn svg {
+  width: 12px;
+  height: 12px
+}
+
 .muscle-tabs {
   display: flex;
-  gap: 7px;
+  gap: 6px;
   padding: 10px 18px;
   overflow-x: auto;
-  scrollbar-width: none;
+  scrollbar-width: none
 }
-.muscle-tabs::-webkit-scrollbar { display: none; }
+
+.muscle-tabs::-webkit-scrollbar {
+  display: none
+}
 
 .tab-btn {
-  padding: 7px 14px;
-  border-radius: 10px;
+  padding: 6px 14px;
+  border-radius: 99px;
   font-size: 12px;
-  font-weight: 700;
   white-space: nowrap;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-secondary);
-  border: 1px solid transparent;
+  color: var(--text2);
+  border: 1px solid var(--line);
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: all 0.2s var(--smooth);
-}
-.tab-btn svg {
-  width: 14px;
-  height: 14px;
-}
-.tab-btn:hover {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.1);
-}
-.tab-btn.active {
-  background: rgba(0, 240, 255, 0.16);
-  color: var(--cyan);
-  border-color: rgba(0, 240, 255, 0.4);
+  transition: all .2s var(--smooth)
 }
 
-/* Scrollable Exercise Cards Grid */
+.tab-btn svg {
+  width: 14px;
+  height: 14px
+}
+
+.tab-btn:hover {
+  color: var(--text);
+  border-color: var(--line-s)
+}
+
+.tab-btn.active {
+  background: var(--acc);
+  color: #0a0a0a;
+  border-color: var(--acc)
+}
+
 .exercise-list {
   flex: 1 1 0%;
   min-height: 0;
   padding: 10px 18px 24px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-.exercise-list::-webkit-scrollbar {
-  width: 5px;
-}
-.exercise-list::-webkit-scrollbar-button {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-.exercise-list::-webkit-scrollbar-track {
-  background: transparent !important;
-}
-.exercise-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.22) !important;
-  border-radius: 999px !important;
-}
-.exercise-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.38) !important;
+  gap: 8px
 }
 
 .exercise-item {
@@ -1300,101 +1517,103 @@ input:focus {
   align-items: center;
   gap: 14px;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.035);
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 18px;
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s var(--spring);
+  transition: all .2s var(--spring)
 }
+
 .exercise-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--line-strong);
-  transform: translateY(-1px);
+  background: var(--surf);
+  border-color: var(--line-s);
+  transform: translateY(-1px)
 }
+
 .exercise-item:active {
-  transform: scale(0.98);
+  transform: scale(.98)
 }
+
 .exercise-item.selected {
-  border-color: var(--cyan);
-  background: rgba(0, 240, 255, 0.08);
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+  border-color: var(--acc-line);
+  background: var(--acc-soft)
 }
 
 .ex-card-icon {
   width: 42px;
   height: 42px;
-  border-radius: 12px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
-  background: rgba(0, 240, 255, 0.08);
-  border: 1px solid rgba(0, 240, 255, 0.2);
-  color: var(--cyan);
-  flex-shrink: 0;
+  color: var(--acc);
+  border: 1px solid var(--line-s);
+  flex-shrink: 0
 }
+
 .ex-card-icon svg {
   width: 20px;
-  height: 20px;
+  height: 20px
 }
 
 .ex-info {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  flex: 1;
+  flex: 1
 }
+
 .ex-name {
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--text);
+  font-size: 21px;
+  line-height: 1.05
 }
+
 .ex-tags {
   display: flex;
   gap: 6px;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: wrap
 }
+
 .ex-badge {
   font-size: 10px;
-  font-weight: 800;
-  padding: 2px 7px;
-  border-radius: 6px;
+  padding: 1px 7px;
+  border-radius: 99px;
   text-transform: uppercase;
+  border: 1px solid var(--line);
+  color: var(--text2)
 }
+
 .ex-badge.view {
-  background: rgba(0, 240, 255, 0.12);
-  color: var(--cyan);
+  color: var(--acc);
+  border-color: var(--acc-line)
 }
-.ex-badge.angles {
-  background: rgba(255, 255, 255, 0.07);
-  color: var(--text-secondary);
-}
+
 .ex-badge.mode {
-  background: rgba(0, 245, 155, 0.12);
-  color: var(--ok);
+  background: var(--acc);
+  color: #0a0a0a;
+  border-color: var(--acc)
 }
+
 .ex-tip {
   font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 1px;
+  color: var(--muted)
 }
+
 .ex-check {
   width: 22px;
   height: 22px;
-  border-radius: 50%;
   display: grid;
   place-items: center;
-  color: var(--cyan);
-  flex-shrink: 0;
-}
-.ex-check svg {
-  width: 16px;
-  height: 16px;
+  color: var(--acc);
+  flex-shrink: 0
 }
 
-/* ==========================================================================
-   Manual Mode Screen
-   ========================================================================== */
+.ex-check svg {
+  width: 16px;
+  height: 16px
+}
+
+/* manual mode */
 .manual-overlay {
   position: absolute;
   inset: 0;
@@ -1402,867 +1621,627 @@ input:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at 50% 50%, rgba(14, 18, 26, 0.92), rgba(7, 8, 10, 0.98));
+  background: radial-gradient(ellipse at 50% 50%, rgba(20, 20, 18, .94), rgba(10, 10, 10, .99));
   -webkit-backdrop-filter: blur(20px);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px)
 }
+
 .manual-center-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   padding: 24px;
-  text-align: center;
+  text-align: center
 }
+
 .manual-badge {
   font-size: 11px;
-  font-weight: 800;
   padding: 3px 12px;
   border-radius: 99px;
-  background: rgba(0, 240, 255, 0.14);
-  color: var(--cyan);
-  border: 1px solid rgba(0, 240, 255, 0.35);
+  color: var(--acc);
+  border: 1px solid var(--acc-line);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: .1em
 }
+
 .manual-center-card h3 {
-  font-size: 24px;
-  font-weight: 800;
+  font-size: 36px;
+  letter-spacing: -.02em
 }
+
 .manual-count {
-  font-family: var(--num);
-  font-size: 88px;
-  font-weight: 700;
-  line-height: 0.95;
-  color: #fff;
+  font-size: 130px;
+  line-height: .85
 }
+
 .manual-big-btn {
   position: relative;
-  width: 170px;
-  height: 170px;
+  width: 168px;
+  height: 168px;
   border-radius: 50%;
   margin: 10px 0;
-  background: linear-gradient(135deg, #00f0ff, #2563eb);
-  color: #07080a;
+  background: var(--acc);
+  color: #0a0a0a;
+  font-family: var(--pix);
   font-size: 26px;
-  font-weight: 800;
-  box-shadow: 0 16px 44px rgba(0, 240, 255, 0.45);
-  border: 4px solid rgba(255, 255, 255, 0.25);
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.15s var(--spring), box-shadow 0.15s;
-}
-.manual-big-btn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 20px 52px rgba(0, 240, 255, 0.6);
-}
-.manual-big-btn:active {
-  transform: scale(0.92);
-}
-.manual-tip {
-  font-size: 13px;
-  color: var(--text-secondary);
+  box-shadow: 0 0 0 10px var(--acc-soft), 0 16px 50px var(--acc-glow);
+  transition: transform .15s var(--spring)
 }
 
-/* ==========================================================================
-   Finish Set & Log Modals
-   ========================================================================== */
-.finish-body, .log-body {
+.manual-big-btn:hover {
+  transform: scale(1.05)
+}
+
+.manual-big-btn:active {
+  transform: scale(.92)
+}
+
+.manual-tip {
+  font-size: 13px;
+  color: var(--text2)
+}
+
+/* finish + log */
+.finish-body,
+.log-body,
+.goal-modal-body,
+.form-modal-body {
   padding: 18px 22px 24px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-height: 60dvh;
-  overflow-y: auto;
+  gap: 14px;
+  overflow-y: auto
 }
+
+.finish-body,
+.log-body {
+  max-height: 60dvh
+}
+
 .finish-stats {
   display: flex;
-  gap: 12px;
+  gap: 10px
 }
+
 .stat-box {
   flex: 1;
-  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px
 }
+
 .stat-lbl {
   font-size: 11px;
-  font-weight: 800;
-  color: var(--text-secondary);
+  color: var(--text2);
   text-transform: uppercase;
+  letter-spacing: .1em
 }
+
 .stat-val {
-  font-family: var(--num);
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--ok);
+  font-size: 44px;
+  line-height: 1;
+  color: var(--acc)
 }
+
 .stat-val.mode {
+  font-family: var(--pix);
   font-size: 18px;
-  color: var(--cyan);
+  color: var(--text)
 }
+
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 6px
 }
+
 .form-group label {
   font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
+  font-weight: 600
 }
+
 .input-with-unit {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: center
 }
+
 .input-with-unit input {
   width: 100%;
   height: 48px;
   font-size: 16px;
   padding-right: 74px;
+  border-radius: 99px
 }
+
 .input-with-unit .unit {
   position: absolute;
-  right: 14px;
+  right: 16px;
   font-size: 12px;
-  font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--text2)
 }
+
 .finish-actions {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 6px;
+  margin-top: 6px
 }
 
 .log-items-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 8px
 }
+
 .log-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 16px
 }
+
 .log-item-info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px
 }
+
 .log-item-title {
-  font-size: 14px;
-  font-weight: 800;
+  font-size: 21px;
+  line-height: 1.05
 }
+
 .log-item-meta {
   font-size: 11px;
-  color: var(--text-secondary);
+  color: var(--text2);
   display: flex;
-  gap: 8px;
+  gap: 8px
 }
+
 .log-item-stat {
-  font-family: var(--num);
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  margin-right: 12px;
+  font-size: 32px;
+  margin-right: 12px
 }
+
 .log-del-btn {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
-  color: var(--text-secondary);
-  transition: all 0.2s;
+  color: var(--text2);
+  transition: all .2s
 }
-.log-del-btn svg { width: 16px; height: 16px; }
+
+.log-del-btn svg {
+  width: 16px;
+  height: 16px
+}
+
 .log-del-btn:hover {
   color: var(--danger);
-  background: rgba(255, 77, 77, 0.14);
+  background: rgba(255, 90, 71, .14)
 }
+
 .danger-outline-btn {
   height: 40px;
   width: 100%;
-  border: 1px solid rgba(255, 77, 77, 0.35);
-  border-radius: 12px;
+  border: 1px solid rgba(255, 90, 71, .35);
+  border-radius: 99px;
   font-size: 12px;
-  font-weight: 700;
   color: var(--danger);
-  transition: background 0.2s;
+  transition: background .2s
 }
+
 .danger-outline-btn:hover {
-  background: rgba(255, 77, 77, 0.15);
+  background: rgba(255, 90, 71, .14)
 }
+
 .log-empty {
   padding: 32px 16px;
   text-align: center;
-  font-size: 13px;
-  color: var(--text-secondary);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--text2)
 }
 
-/* ==========================================================================
-   Tuning Helper HUD Panel
-   ========================================================================== */
+/* tuning */
 .tuning-panel {
   position: absolute;
   z-index: 45;
   top: max(64px, calc(env(safe-area-inset-top) + 54px));
   right: 14px;
   width: 320px;
-  background: var(--bg-card-heavy);
+  background: var(--card-h);
   border: 1px solid var(--line);
-  border-radius: 20px;
-  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.7);
+  border-radius: 22px;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, .7);
   -webkit-backdrop-filter: blur(24px);
   backdrop-filter: blur(24px);
   display: flex;
-  flex-direction: column;
+  flex-direction: column
 }
+
 .tuning-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--line)
 }
+
 .tuning-title {
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: .1em;
   text-transform: uppercase;
-  color: var(--cyan);
+  color: var(--acc)
 }
+
 .tuning-close-btn {
   width: 24px;
   height: 24px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: var(--text-secondary);
+  color: var(--text2)
 }
-.tuning-close-btn svg { width: 14px; height: 14px; }
+
+.tuning-close-btn svg {
+  width: 14px;
+  height: 14px
+}
+
 .tuning-body {
   padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 12px
 }
+
 .tune-metrics {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
+  gap: 6px
 }
+
 .metric {
-  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 6px;
-  text-align: center;
+  text-align: center
 }
+
 .m-lbl {
   display: block;
   font-size: 9px;
-  font-weight: 800;
-  color: var(--text-secondary);
-  text-transform: uppercase;
+  color: var(--text2);
+  text-transform: uppercase
 }
+
 .m-val {
   font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums
 }
+
 .tune-visibilities {
-  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 10px;
+  padding: 10px
 }
+
 .vis-title {
   font-size: 10px;
-  font-weight: 800;
-  color: var(--text-secondary);
+  color: var(--text2);
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 6px
 }
+
 .vis-grid {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 11px;
+  font-size: 11px
 }
+
 .vis-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
+  font-variant-numeric: tabular-nums
 }
+
 .vis-bar-bg {
   width: 80px;
-  height: 4px;
+  height: 3px;
   border-radius: 99px;
-  background: rgba(255, 255, 255, 0.08);
-  overflow: hidden;
+  background: var(--surf-h);
+  overflow: hidden
 }
+
 .vis-bar-fill {
   height: 100%;
-  background: var(--cyan);
+  background: var(--acc);
   border-radius: 99px;
-  transition: width 0.1s linear;
+  transition: width .1s linear
 }
+
 .tune-inputs {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 8px
 }
+
 .tune-field label {
   display: block;
   font-size: 10px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  margin-bottom: 4px;
+  font-weight: 600;
+  color: var(--text2);
+  margin-bottom: 4px
 }
+
 .tune-field input {
   width: 100%;
   height: 36px;
   font-size: 13px;
-  padding: 6px 10px;
+  padding: 6px 10px
 }
+
 .tune-actions {
   display: flex;
-  gap: 8px;
+  gap: 8px
 }
+
 .tune-btn {
   flex: 1;
   height: 36px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 800;
-  background: rgba(255, 255, 255, 0.07);
-  color: var(--text);
-  border: 1px solid var(--line);
-  transition: background 0.2s;
-}
-.tune-btn.primary {
-  background: var(--cyan);
-  color: #07080a;
-  border-color: transparent;
-}
-
-/* ==========================================================================
-   Responsive Adaptations
-   ========================================================================== */
-@media (max-width: 640px) {
-  .lbl { display: none; }
-  .header { left: 10px; right: 10px; }
-  .brand { padding: 5px 10px; }
-  .exercise-pill { max-width: 140px; }
-  .exercise-name { max-width: 80px; }
-  .exercise-nav-bar { left: 10px; right: 10px; padding: 6px 10px; gap: 5px; }
-  .ex-btn { height: 34px; padding: 0 10px; font-size: 11px; }
-  .start-exercise-grid { grid-template-columns: repeat(2, 1fr); max-height: 130px; }
-  .counter-card {
-    left: 10px;
-    right: 10px;
-    bottom: max(56px, calc(env(safe-area-inset-bottom) + 50px));
-    padding: 10px 14px;
-    gap: 12px;
-  }
-  .ring-wrapper { width: 90px; height: 90px; }
-  .counter-number { font-size: 40px; }
-  .hud-actions { width: 100%; justify-content: space-between; margin-top: 4px; }
-  .hud-btn { flex: 1; height: 34px; }
-  .hint { font-size: 11px; padding: 6px 12px; }
-  .tuning-panel { width: calc(100vw - 20px); right: 10px; left: 10px; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-
-
-/* ==========================================================================
-   Workout Goal & Motivation Audio Design System
-   ========================================================================== */
-
-/* HUD Goal Badge Pill */
-.hud-goal-pill {
-  font-size: 9px;
-  font-weight: 800;
-  padding: 1px 7px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s var(--smooth);
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  border: 1px solid transparent;
-}
-.hud-goal-pill:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #fff;
-}
-.hud-goal-pill.achieved {
-  background: rgba(0, 245, 155, 0.18);
-  color: var(--ok);
-  border-color: rgba(0, 245, 155, 0.45);
-  box-shadow: 0 0 10px rgba(0, 245, 155, 0.3);
-}
-
-/* Goal Achieved HUD Animation */
-.counter-card.goal-achieved {
-  animation: goal-glow-bloom 0.9s var(--spring);
-  border-color: rgba(0, 245, 155, 0.6) !important;
-  box-shadow: 0 0 36px rgba(0, 245, 155, 0.4) !important;
-}
-@keyframes goal-glow-bloom {
-  0% { transform: scale(0.95); }
-  50% { transform: scale(1.04); }
-  100% { transform: scale(1); }
-}
-
-/* Start Screen Target Goal & Audio Card */
-.start-target-card {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 16px;
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  text-align: left;
-}
-
-.target-card-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.target-card-row.sound-row {
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  padding-top: 8px;
-}
-
-.target-title-bar, .sound-title-bar {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.target-icon, .sound-icon {
-  width: 13px;
-  height: 13px;
-  color: var(--cyan);
-}
-.target-label, .sound-label {
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  color: #8e99ac;
-  letter-spacing: 0.07em;
-}
-.target-val-badge {
-  margin-left: auto;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--cyan);
-  background: rgba(0, 240, 255, 0.1);
-  padding: 1px 7px;
   border-radius: 99px;
-}
-.sound-tag {
-  margin-left: auto;
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--ok);
-  background: rgba(0, 245, 155, 0.1);
-  padding: 1px 6px;
-  border-radius: 99px;
-}
-
-.start-goal-chips {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.start-chip {
-  height: 28px;
-  min-width: 32px;
-  padding: 0 8px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.04);
-  color: #8e99ac;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  cursor: pointer;
-  transition: all 0.18s var(--smooth);
-  display: grid;
-  place-items: center;
-}
-.start-chip:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-}
-.start-chip.active {
-  background: rgba(0, 240, 255, 0.15);
-  color: #fff;
-  border-color: rgba(0, 240, 255, 0.45);
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-}
-.start-custom-wrap {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: auto;
-}
-#startCustomGoalInput {
-  width: 48px;
-  height: 28px;
-  padding: 0 4px;
-  border-radius: 8px;
   font-size: 12px;
-  font-weight: 700;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  color: #fff;
-}
-#startCustomGoalInput:focus {
-  border-color: var(--cyan);
-}
-.custom-unit-text {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-muted);
+  border: 1px solid var(--line-s);
+  transition: background .2s
 }
 
-.start-sound-controls {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 10px;
-  padding: 6px 10px;
-}
-.sound-name-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #cbd5e1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 220px;
-}
-.sound-mini-btns {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  flex-shrink: 0;
-}
-.sound-mini-btn {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.06);
-  color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  cursor: pointer;
-  transition: all 0.18s var(--smooth);
-}
-.sound-mini-btn svg {
-  width: 12px;
-  height: 12px;
-}
-.sound-mini-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-}
-.sound-mini-btn.upload:hover {
-  color: var(--cyan);
-  border-color: rgba(0, 240, 255, 0.4);
-}
-.sound-mini-btn.remove:hover {
-  color: var(--danger);
-  border-color: rgba(255, 77, 77, 0.4);
+.tune-btn:hover {
+  background: var(--surf)
 }
 
-/* ==========================================================================
-   Goal & Motivation Audio Modal (#goalModal)
-   ========================================================================== */
+.tune-btn.primary {
+  background: var(--acc);
+  color: #0a0a0a;
+  border-color: transparent
+}
+
+/* goal + audio modal */
 .goal-sheet-container {
-  max-width: 520px;
+  max-width: 520px
 }
+
 .goal-modal-body {
-  padding: 16px 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  max-height: 75dvh;
-  overflow-y: auto;
+  max-height: 75dvh
 }
+
 .goal-section-card {
-  background: rgba(255, 255, 255, 0.035);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 20px;
   padding: 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  text-align: left;
+  text-align: left
 }
+
 .goal-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center
 }
+
 .goal-title-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 8px
 }
+
 .goal-card-icon {
   width: 16px;
   height: 16px;
-  color: var(--cyan);
+  color: var(--acc)
 }
+
 .goal-card-title {
-  font-size: 13px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: #fff;
+  font-size: 22px;
+  line-height: 1
 }
+
 .goal-highlight-val {
-  font-family: var(--num);
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ok);
+  font-size: 24px;
+  color: var(--acc)
 }
+
 .sound-badge-active {
   font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px;
+  padding: 2px 9px;
   border-radius: 99px;
-  background: rgba(0, 245, 155, 0.12);
-  color: var(--ok);
-  border: 1px solid rgba(0, 245, 155, 0.25);
+  color: var(--acc);
+  border: 1px solid var(--acc-line)
 }
+
 .goal-desc {
   font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.45;
+  color: var(--text2);
+  line-height: 1.5
 }
+
 .goal-preset-chips {
   display: flex;
   gap: 6px;
-  flex-wrap: wrap;
-}
-.preset-chip {
-  height: 32px;
-  min-width: 40px;
-  padding: 0 10px;
-  border-radius: 10px;
-  font-size: 12px;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.05);
-  color: #94a3b8;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  cursor: pointer;
-  transition: all 0.2s var(--smooth);
-}
-.preset-chip:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-.preset-chip.active {
-  background: rgba(0, 240, 255, 0.16);
-  color: #fff;
-  border-color: rgba(0, 240, 255, 0.5);
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+  flex-wrap: wrap
 }
 
 .custom-goal-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 4px;
+  padding-top: 4px
 }
+
 .custom-goal-row label {
   font-size: 12px;
-  font-weight: 700;
-  color: var(--text);
+  font-weight: 600
 }
+
 .input-unit-wrap {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: center
 }
+
 .input-unit-wrap input {
-  width: 90px;
+  width: 96px;
   height: 36px;
-  padding: 0 34px 0 12px;
+  padding: 0 36px 0 14px;
   font-size: 14px;
-  font-weight: 700;
-  border-radius: 10px;
+  font-weight: 600;
+  border-radius: 99px
 }
+
 .unit-label {
   position: absolute;
-  right: 10px;
+  right: 12px;
   font-size: 11px;
-  font-weight: 700;
-  color: var(--text-muted);
+  color: var(--muted)
 }
 
 .sound-uploader-box {
-  background: rgba(0, 0, 0, 0.28);
-  border: 1px dashed rgba(255, 255, 255, 0.14);
-  border-radius: 14px;
+  border: 1px dashed var(--line-s);
+  border-radius: 16px;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 12px
 }
+
 .sound-file-display {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 10px
 }
+
 .file-icon-wrap {
   width: 36px;
   height: 36px;
-  border-radius: 10px;
-  background: rgba(0, 240, 255, 0.08);
-  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 50%;
   display: grid;
   place-items: center;
-  color: var(--cyan);
-  flex-shrink: 0;
+  color: var(--acc);
+  border: 1px solid var(--line-s);
+  flex-shrink: 0
 }
+
 .file-icon-wrap svg {
   width: 18px;
-  height: 18px;
+  height: 18px
 }
+
 .file-details {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  overflow: hidden;
+  overflow: hidden
 }
+
 .file-name {
   font-size: 13px;
-  font-weight: 700;
-  color: #fff;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: ellipsis
 }
+
 .file-hint {
   font-size: 11px;
-  color: var(--text-muted);
+  color: var(--muted)
 }
+
 .sound-action-btns {
   display: flex;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: wrap
 }
+
 .sound-action-btn {
   height: 36px;
-  padding: 0 14px;
+  padding: 0 15px;
   border-radius: 99px;
   font-size: 12px;
-  font-weight: 700;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-s);
   cursor: pointer;
-  transition: all 0.2s var(--smooth);
+  transition: all .2s var(--smooth)
 }
+
 .sound-action-btn svg.btn-icon {
   width: 13px;
-  height: 13px;
+  height: 13px
 }
+
 .sound-action-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: var(--line-strong);
+  background: var(--surf)
 }
-.sound-action-btn.primary {
-  background: rgba(0, 240, 255, 0.12);
-  color: var(--cyan);
-  border-color: rgba(0, 240, 255, 0.35);
-}
-.sound-action-btn.primary:hover {
-  background: rgba(0, 240, 255, 0.2);
-}
+
+.sound-action-btn.primary,
 .sound-action-btn.upload {
-  background: rgba(0, 245, 155, 0.12);
-  color: var(--ok);
-  border-color: rgba(0, 245, 155, 0.35);
+  background: var(--acc);
+  color: #0a0a0a;
+  border-color: var(--acc)
 }
-.sound-action-btn.upload:hover {
-  background: rgba(0, 245, 155, 0.2);
-}
+
 .sound-action-btn.danger {
-  background: rgba(255, 77, 77, 0.1);
   color: var(--danger);
-  border-color: rgba(255, 77, 77, 0.3);
-}
-.sound-action-btn.danger:hover {
-  background: rgba(255, 77, 77, 0.2);
+  border-color: rgba(255, 90, 71, .4)
 }
 
-
-/* ==========================================================================
-   Exercise Motion Animation Stage (GymMane / Pinterest Aesthetic)
-   ========================================================================== */
+/* form demo stage */
 .exercise-demo-stage {
   position: relative;
   width: 100%;
   height: 180px;
-  border-radius: 20px;
+  border-radius: 22px;
   overflow: hidden;
-  background: #090c13;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-  margin-bottom: 2px;
+  background: #0d0d0c;
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, .5)
 }
+
 .exercise-demo-stage.large {
-  height: 220px;
+  height: 220px
 }
+
 .demo-canvas-wrap {
   width: 100%;
   height: 100%;
-  position: relative;
+  position: relative
 }
-#startExerciseAnimCanvas, #formModalAnimCanvas {
+
+#startExerciseAnimCanvas,
+#formModalAnimCanvas {
   width: 100%;
   height: 100%;
-  display: block;
+  display: block
 }
 
 .demo-stage-header {
@@ -2274,57 +2253,52 @@ input:focus {
   justify-content: space-between;
   align-items: center;
   z-index: 2;
-  pointer-events: none;
+  pointer-events: none
 }
+
 .demo-badge-group {
   display: flex;
   gap: 6px;
-  align-items: center;
+  align-items: center
 }
-.demo-tag {
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.07em;
-  padding: 3px 8px;
-  border-radius: 99px;
-  background: rgba(0, 240, 255, 0.12);
-  color: var(--cyan);
-  border: 1px solid rgba(0, 240, 255, 0.3);
-  text-transform: uppercase;
-}
+
+.demo-tag,
 .demo-angle-pill {
-  font-family: var(--num);
-  font-size: 9px;
-  font-weight: 700;
-  padding: 3px 8px;
+  font-size: 10px;
+  letter-spacing: .06em;
+  padding: 2px 8px;
   border-radius: 99px;
-  background: rgba(0, 245, 155, 0.1);
-  color: var(--ok);
-  border: 1px solid rgba(0, 245, 155, 0.25);
+  color: var(--acc);
+  border: 1px solid var(--acc-line);
+  text-transform: uppercase
 }
+
+.demo-angle-pill {
+  color: var(--text2);
+  border-color: var(--line-s)
+}
+
 .demo-play-btn {
   pointer-events: auto;
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(14, 18, 26, 0.7);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #fff;
+  background: rgba(10, 10, 10, .7);
+  border: 1px solid var(--line-s);
   display: grid;
   place-items: center;
   cursor: pointer;
-  transition: all 0.2s var(--smooth);
+  transition: all .2s var(--smooth)
 }
+
 .demo-play-btn svg {
   width: 12px;
-  height: 12px;
+  height: 12px
 }
+
 .demo-play-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+  background: var(--surf-h);
+  transform: scale(1.05)
 }
 
 .demo-stage-footer {
@@ -2336,69 +2310,811 @@ input:focus {
   justify-content: space-between;
   align-items: center;
   z-index: 2;
-  pointer-events: none;
-}
-.demo-phase-lbl {
-  font-family: var(--num);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: rgba(255, 255, 255, 0.65);
-  text-transform: uppercase;
-  background: rgba(0, 0, 0, 0.45);
-  padding: 2px 7px;
-  border-radius: 4px;
-}
-.demo-angle-live {
-  font-family: var(--num);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--cyan);
-  background: rgba(0, 0, 0, 0.55);
-  padding: 2px 7px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 240, 255, 0.25);
+  pointer-events: none
 }
 
-/* Form Modal Specific Styling */
+.demo-phase-lbl,
+.demo-angle-live {
+  font-size: 10px;
+  letter-spacing: .05em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, .55);
+  text-transform: uppercase
+}
+
+.demo-phase-lbl {
+  color: var(--text2)
+}
+
+.demo-angle-live {
+  color: var(--acc)
+}
+
 .form-sheet-container {
-  max-width: 480px;
+  max-width: 480px
 }
-.form-modal-body {
-  padding: 16px 20px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+
 .form-tip-card {
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 14px;
-  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 14px
 }
+
 .form-tip-card svg.tip-icon {
   width: 18px;
   height: 18px;
-  color: var(--cyan);
+  color: var(--acc);
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 1px
 }
+
 .tip-content {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px
 }
+
 .tip-title {
   font-size: 12px;
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  color: #fff;
+  letter-spacing: .06em;
+  text-transform: uppercase
 }
+
 #formModalTipText {
   font-size: 12px;
-  color: var(--text-secondary);
-  line-height: 1.45;
+  color: var(--text2);
+  line-height: 1.5
+}
+
+@media (max-width:640px) {
+  .lbl {
+    display: none
+  }
+
+  .header {
+    left: 10px;
+    right: 10px
+  }
+
+  .exercise-pill {
+    max-width: 150px
+  }
+
+  .exercise-name {
+    max-width: 84px
+  }
+
+  .exercise-nav-bar {
+    left: 10px;
+    right: 10px;
+    padding: 6px 10px;
+    gap: 5px
+  }
+
+  .ex-btn {
+    height: 32px;
+    padding: 0 10px;
+    font-size: 12px
+  }
+
+  .start-exercise-grid {
+    max-height: 130px
+  }
+
+  .overlay-modal h2 {
+    font-size: 38px
+  }
+
+  .counter-card {
+    left: 10px;
+    right: 10px;
+    bottom: max(56px, calc(env(safe-area-inset-bottom) + 50px));
+    padding: 10px 14px;
+    gap: 12px
+  }
+
+  .ring-wrapper {
+    width: 90px;
+    height: 90px
+  }
+
+  .counter-number {
+    font-size: 48px
+  }
+
+  .hud-actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 4px
+  }
+
+  .hud-btn {
+    flex: 1;
+    height: 34px
+  }
+
+  .hint {
+    font-size: 11px;
+    padding: 6px 12px
+  }
+
+  .tuning-panel {
+    width: calc(100vw - 20px);
+    right: 10px;
+    left: 10px
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important
+  }
+}
+
+/* ===== RepVision v2: advanced layer (fixes + extras.js styles) ===== */
+[hidden] {
+  display: none !important
+}
+
+input {
+  -webkit-user-select: text;
+  user-select: text
+}
+
+button:focus-visible,
+input:focus-visible,
+.exercise-item:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px)
+  }
+}
+
+@keyframes marq {
+  to {
+    transform: translateX(-50%)
+  }
+}
+
+/* film grain over the camera */
+.vignette::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23n%29'/%3E%3C/svg%3E");
+  opacity: .07;
+  mix-blend-mode: overlay
+}
+
+/* maximal layer on the start screen: scrolling ticker + ghost wordmark */
+.start-overlay::before {
+  content: "REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ REP ✦ COUNT ✦ FORM ✦ REPEAT ✦ ";
+  position: absolute;
+  top: 14px;
+  left: 0;
+  white-space: nowrap;
+  font-family: var(--pix);
+  font-size: 12px;
+  letter-spacing: .35em;
+  color: var(--muted);
+  opacity: .55;
+  animation: marq 70s linear infinite;
+  pointer-events: none
+}
+
+.start-overlay::after {
+  content: "repvision";
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: min(34vw, 420px);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, .07);
+  white-space: nowrap;
+  pointer-events: none
+}
+
+.overlay-modal {
+  z-index: 1
+}
+
+.overlay-modal>* {
+  animation: rise .7s var(--spring) backwards
+}
+
+.overlay-modal>:nth-child(2) {
+  animation-delay: .06s
+}
+
+.overlay-modal>:nth-child(3) {
+  animation-delay: .1s
+}
+
+.overlay-modal>:nth-child(4) {
+  animation-delay: .14s
+}
+
+.overlay-modal>:nth-child(5) {
+  animation-delay: .18s
+}
+
+.overlay-modal>:nth-child(6) {
+  animation-delay: .22s
+}
+
+.overlay-modal>:nth-child(7) {
+  animation-delay: .26s
+}
+
+.overlay-modal>:nth-child(8) {
+  animation-delay: .3s
+}
+
+.counter-card {
+  animation: rise .6s var(--spring) .1s backwards
+}
+
+.exercise-nav-bar,
+.header {
+  animation: rise .6s var(--spring) backwards
+}
+
+/* tick dial around the rep ring */
+.ring-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from -1deg, rgba(255, 255, 255, .22) 0 2deg, transparent 2deg 6deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 91%, #000 92%);
+  mask: radial-gradient(closest-side, transparent 91%, #000 92%)
+}
+
+.counter-card[data-state="up"] .ring-wrapper::before {
+  background: repeating-conic-gradient(from -1deg, var(--acc-line) 0 2deg, transparent 2deg 6deg)
+}
+
+/* session clock */
+.session-time {
+  font-family: var(--pix);
+  font-size: 12px;
+  letter-spacing: .06em;
+  color: var(--text2);
+  padding-left: 9px;
+  border-left: 1px solid var(--line);
+  font-variant-numeric: tabular-nums
+}
+
+/* rest timer */
+.rest-card {
+  position: absolute;
+  z-index: 42;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 28px 16px;
+  min-width: 210px;
+  background: var(--card-h);
+  border: 1px solid var(--acc-line);
+  border-radius: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .7), 0 0 44px var(--acc-soft);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px)
+}
+
+.rest-lbl {
+  font-family: var(--pix);
+  font-size: 11px;
+  letter-spacing: .24em;
+  color: var(--acc)
+}
+
+.rest-num {
+  font-family: var(--serif);
+  font-size: 88px;
+  line-height: .85;
+  font-variant-numeric: tabular-nums
+}
+
+.rest-bar {
+  width: 160px;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--surf-h);
+  overflow: hidden
+}
+
+.rest-bar i {
+  display: block;
+  height: 100%;
+  background: var(--acc);
+  transition: width 1s linear
+}
+
+.rest-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px
+}
+
+.rest-btns button {
+  font-family: var(--pix);
+  font-size: 12px;
+  padding: 7px 16px;
+  border-radius: 99px;
+  border: 1px solid var(--line-s);
+  transition: all .2s
+}
+
+.rest-btns button:hover {
+  background: var(--acc);
+  color: #0a0a0a;
+  border-color: var(--acc)
+}
+
+/* toast + shortcuts sheet */
+.rv-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  transform: translate(-50%, 16px);
+  z-index: 70;
+  font-family: var(--pix);
+  font-size: 12px;
+  padding: 9px 18px;
+  border-radius: 99px;
+  background: var(--acc);
+  color: #0a0a0a;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .3s var(--spring);
+  white-space: nowrap
+}
+
+.rv-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0)
+}
+
+.kbd-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px)
+}
+
+.kbd-card {
+  background: var(--card-h);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  padding: 22px 26px;
+  min-width: 300px;
+  animation: rise .4s var(--spring)
+}
+
+.kbd-card h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 10px
+}
+
+.kbd-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line)
+}
+
+.kbd-row:last-child {
+  border-bottom: 0
+}
+
+.kbd-row kbd {
+  font-family: var(--pix);
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 7px;
+  background: var(--surf);
+  border: 1px solid var(--line-s)
+}
+
+.kbd-row span {
+  font-size: 13px;
+  color: var(--text2)
+}
+
+@media (pointer:coarse) {
+  .icon-btn {
+    height: 38px;
+    min-width: 38px
+  }
+
+  .ex-btn {
+    height: 38px
+  }
+
+  .muscle-btn {
+    height: 30px
+  }
+
+  .hud-btn {
+    height: 40px
+  }
+}
+
+@media (max-width:640px) {
+  .rv-desk {
+    display: none !important
+  }
+
+  .start-overlay::before {
+    top: 8px
+  }
+
+  .rest-num {
+    font-size: 72px
+  }
+
+  .rv-toast {
+    bottom: 150px
+  }
+}
+
+/* ==========================================================================
+   REST TIMER & FLOATING REST BADGE (GymMane Style Radial Countdown)
+   ========================================================================== */
+.sheet-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rest-sheet-container {
+  max-width: 460px;
+  margin: 0 auto;
+  border-radius: 28px 28px 0 0;
+}
+
+@media (min-width: 641px) {
+  .rest-sheet-container {
+    border-radius: 28px;
+    margin: auto;
+  }
+}
+
+.rest-modal-body {
+  padding: 16px 22px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.rest-radial-wrap {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: grid;
+  place-items: center;
+  margin: 4px 0;
+}
+
+.rest-radial-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.rest-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.03);
+  stroke-width: 9;
+}
+
+.rest-ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.07);
+  stroke-width: 9;
+}
+
+.rest-ring-fill {
+  fill: none;
+  stroke: var(--acc);
+  stroke-width: 9;
+  stroke-linecap: round;
+  stroke-dasharray: 540.35;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.8s linear, stroke 0.3s ease;
+  filter: drop-shadow(0 0 12px rgba(0, 240, 255, 0.5));
+}
+
+.rest-radial-core {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-align: center;
+}
+
+.rest-digits {
+  font-family: var(--num);
+  font-size: 58px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.rest-unit-lbl {
+  font-family: var(--display);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--text2);
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.rest-status-badge {
+  font-family: var(--sans);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--mint);
+  background: rgba(0, 245, 155, 0.12);
+  border: 1px solid rgba(0, 245, 155, 0.28);
+  padding: 3px 10px;
+  border-radius: 99px;
+  margin-top: 6px;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.rest-status-badge.paused {
+  color: #ffaa00;
+  background: rgba(255, 170, 0, 0.12);
+  border-color: rgba(255, 170, 0, 0.3);
+}
+
+.rest-presets-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.rest-adjust-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 330px;
+}
+
+.rest-adj-btn {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-family: var(--sans);
+  font-weight: 700;
+  font-size: 14px;
+  background: var(--card-h);
+  border: 1px solid var(--line);
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rest-adj-btn:hover {
+  background: var(--surf);
+  border-color: var(--line-s);
+  transform: translateY(-1px);
+}
+
+.rest-adj-btn:active {
+  transform: scale(0.96);
+}
+
+.rest-adj-btn.primary {
+  flex: 1.4;
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.22), rgba(0, 245, 155, 0.22));
+  border-color: rgba(0, 240, 255, 0.4);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0, 240, 255, 0.15);
+}
+
+.rest-adj-btn.primary:hover {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.35), rgba(0, 245, 155, 0.35));
+  border-color: rgba(0, 240, 255, 0.6);
+}
+
+.rest-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: var(--text2);
+}
+
+.rest-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.rest-toggle-label input[type="checkbox"] {
+  accent-color: var(--acc);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.rest-skip-btn {
+  background: none;
+  border: 0;
+  color: var(--text2);
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.rest-skip-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Floating Minimized Rest Timer Pill */
+.floating-rest-badge {
+  position: absolute;
+  top: 110px;
+  right: 16px;
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px 6px 8px;
+  border-radius: 99px;
+  background: rgba(14, 18, 24, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.2);
+  cursor: pointer;
+  animation: rise 0.35s var(--spring);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.floating-rest-badge:hover {
+  transform: translateY(-2px) scale(1.02);
+  border-color: rgba(0, 240, 255, 0.6);
+}
+
+.mini-rest-ring {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+}
+
+.mini-rest-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.mini-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 3.5;
+}
+
+.mini-ring-fill {
+  fill: none;
+  stroke: var(--acc);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 87.96;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.8s linear;
+}
+
+.mini-rest-num {
+  position: absolute;
+  font-family: var(--num);
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.mini-rest-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-rest-lbl {
+  font-family: var(--display);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--mint);
+  line-height: 1;
+}
+
+.mini-rest-sub {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--text2);
+  margin-top: 2px;
+  white-space: nowrap;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-rest-skip-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 0;
+  color: var(--text2);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: 2px;
+}
+
+.mini-rest-skip-btn svg {
+  width: 10px;
+  height: 10px;
+}
+
+.mini-rest-skip-btn:hover {
+  background: rgba(255, 60, 60, 0.2);
+  color: #ff6b6b;
 }

@@ -253,6 +253,47 @@ class SoundManager {
     } catch (e) {}
   }
 
+  playRestGong() {
+    if (this.muted) return;
+    this.init();
+
+    // Haptic vibration pulse if supported on mobile
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate([200, 100, 300]);
+      } catch (e) {}
+    }
+
+    if (this.audioCtx) {
+      try {
+        const now = this.audioCtx.currentTime;
+        // Deep resonant bronze athletic gym gong (harmonic chime stack)
+        const harmonics = [220.0, 440.0, 659.25, 880.0, 1318.5];
+        harmonics.forEach((freq, idx) => {
+          const osc = this.audioCtx.createOscillator();
+          const gain = this.audioCtx.createGain();
+          osc.type = idx % 2 === 0 ? 'sine' : 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+          const vol = 0.28 / (idx + 1);
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(vol, now + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0005, now + 1.8);
+          osc.connect(gain);
+          gain.connect(this.audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 1.8);
+        });
+      } catch (e) {
+        console.warn('Rest gong audio error:', e);
+      }
+    }
+
+    // Voice announcement
+    setTimeout(() => {
+      this.speak("Rest complete! Let's crush the next set.");
+    }, 450);
+  }
+
   stopMotivationSound() {
     if (this.currentAudioElement) {
       try {
@@ -563,6 +604,29 @@ const formModalPlayBtn        = document.getElementById('formModalPlayBtn');
 let startAnimator = null;
 let formModalAnimator = null;
 
+// Rest Timer DOM Elements (GymMane Style)
+const restTimerBtn          = document.getElementById('restTimerBtn');
+const restTimerModal        = document.getElementById('restTimerModal');
+const restBackdrop          = document.getElementById('restBackdrop');
+const closeRestBtn          = document.getElementById('closeRestBtn');
+const minimizeRestBtn       = document.getElementById('minimizeRestBtn');
+const restNextExerciseLbl   = document.getElementById('restNextExerciseLbl');
+const restRingFill          = document.getElementById('restRingFill');
+const restTimeDigits        = document.getElementById('restTimeDigits');
+const restStatusBadge       = document.getElementById('restStatusBadge');
+const restMinus15Btn        = document.getElementById('restMinus15Btn');
+const restPauseResumeBtn    = document.getElementById('restPauseResumeBtn');
+const restPlus15Btn         = document.getElementById('restPlus15Btn');
+const autoRestToggle        = document.getElementById('autoRestToggle');
+const restSkipBtn           = document.getElementById('restSkipBtn');
+const floatingRestBadge     = document.getElementById('floatingRestBadge');
+const miniRingFill          = document.getElementById('miniRingFill');
+const miniRestNum           = document.getElementById('miniRestNum');
+const miniRestSub           = document.getElementById('miniRestSub');
+const miniRestSkipBtn       = document.getElementById('miniRestSkipBtn');
+
+let restTimer = null;
+
 const tuningPanel        = document.getElementById('tuningPanel');
 const closeTuningBtn     = document.getElementById('closeTuningBtn');
 const tuneAngle          = document.getElementById('tuneAngle');
@@ -760,6 +824,7 @@ function selectExercise(exerciseId) {
 
   // Highlight in modal if open
   renderExerciseList(currentActiveMuscleTab);
+  if (restTimer) restTimer.updateNextExerciseLabel();
 }
 
 function updateHUDDisplays() {
@@ -1430,8 +1495,259 @@ async function processVideoLoop() {
   requestAnimationFrame(processVideoLoop);
 }
 
+// ==========================================================================
+// GymMane Style Smart Rest Timer Manager
+// ==========================================================================
+class RestTimerManager {
+  constructor() {
+    this.totalSeconds = 60;
+    this.remaining = 60;
+    this.intervalId = null;
+    this.isPaused = false;
+    this.isMinimized = false;
+    this.autoStart = true;
+    this.CIRCUMFERENCE = 540.35;
+    this.MINI_CIRCUMFERENCE = 87.96;
+
+    try {
+      const savedAuto = localStorage.getItem('repvision_auto_rest');
+      if (savedAuto !== null) this.autoStart = savedAuto === 'true';
+      const savedDuration = parseInt(localStorage.getItem('repvision_default_rest'), 10);
+      if (!isNaN(savedDuration) && savedDuration > 0) {
+        this.totalSeconds = savedDuration;
+        this.remaining = savedDuration;
+      }
+    } catch (e) {}
+  }
+
+  init() {
+    if (autoRestToggle) {
+      autoRestToggle.checked = this.autoStart;
+      autoRestToggle.addEventListener('change', () => {
+        this.autoStart = autoRestToggle.checked;
+        try {
+          localStorage.setItem('repvision_auto_rest', String(this.autoStart));
+        } catch (e) {}
+      });
+    }
+
+    if (closeRestBtn) {
+      closeRestBtn.addEventListener('click', () => this.dismiss());
+    }
+    if (restBackdrop) {
+      restBackdrop.addEventListener('click', () => this.dismiss());
+    }
+    if (minimizeRestBtn) {
+      minimizeRestBtn.addEventListener('click', () => this.minimize());
+    }
+    if (restSkipBtn) {
+      restSkipBtn.addEventListener('click', () => this.dismiss());
+    }
+    if (miniRestSkipBtn) {
+      miniRestSkipBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.dismiss();
+      });
+    }
+    if (floatingRestBadge) {
+      floatingRestBadge.addEventListener('click', () => this.expand());
+    }
+
+    if (restPauseResumeBtn) {
+      restPauseResumeBtn.addEventListener('click', () => this.togglePause());
+    }
+    if (restMinus15Btn) {
+      restMinus15Btn.addEventListener('click', () => this.adjustTime(-15));
+    }
+    if (restPlus15Btn) {
+      restPlus15Btn.addEventListener('click', () => this.adjustTime(15));
+    }
+
+    // Preset Chips
+    const presetChips = document.querySelectorAll('.rest-presets-row .preset-chip');
+    presetChips.forEach(chip => {
+      const sec = parseInt(chip.getAttribute('data-rest'), 10);
+      if (sec === this.totalSeconds) {
+        presetChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      }
+      chip.addEventListener('click', () => {
+        presetChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        this.setDuration(sec);
+      });
+    });
+
+    this.render();
+  }
+
+  setDuration(sec) {
+    this.totalSeconds = sec;
+    this.remaining = sec;
+    try {
+      localStorage.setItem('repvision_default_rest', String(sec));
+    } catch (e) {}
+    this.render();
+    if (this.intervalId) {
+      this.start(sec);
+    }
+  }
+
+  start(seconds = null) {
+    if (seconds) {
+      this.totalSeconds = seconds;
+      this.remaining = seconds;
+    } else {
+      this.remaining = this.totalSeconds;
+    }
+
+    this.isPaused = false;
+    this.isMinimized = false;
+    this.stopInterval();
+
+    this.updateNextExerciseLabel();
+    this.render();
+
+    // Open Modal
+    if (floatingRestBadge) floatingRestBadge.style.display = 'none';
+    openModal(restTimerModal);
+
+    this.intervalId = setInterval(() => this.tick(), 1000);
+  }
+
+  stopInterval() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
+  }
+
+  tick() {
+    if (this.isPaused) return;
+
+    this.remaining--;
+    this.render();
+
+    if (this.remaining <= 0) {
+      this.complete();
+    }
+  }
+
+  togglePause() {
+    this.isPaused = !this.isPaused;
+    if (restPauseResumeBtn) {
+      restPauseResumeBtn.textContent = this.isPaused ? 'Resume' : 'Pause';
+    }
+    if (restStatusBadge) {
+      if (this.isPaused) {
+        restStatusBadge.textContent = 'PAUSED';
+        restStatusBadge.classList.add('paused');
+      } else {
+        restStatusBadge.textContent = 'RECOVERING';
+        restStatusBadge.classList.remove('paused');
+      }
+    }
+  }
+
+  adjustTime(delta) {
+    this.remaining = Math.max(1, this.remaining + delta);
+    if (this.remaining > this.totalSeconds) {
+      this.totalSeconds = this.remaining;
+    }
+    this.render();
+  }
+
+  minimize() {
+    this.isMinimized = true;
+    closeModal(restTimerModal);
+    if (floatingRestBadge) {
+      floatingRestBadge.style.display = 'flex';
+    }
+  }
+
+  expand() {
+    this.isMinimized = false;
+    if (floatingRestBadge) {
+      floatingRestBadge.style.display = 'none';
+    }
+    openModal(restTimerModal);
+  }
+
+  dismiss() {
+    this.stopInterval();
+    this.isPaused = false;
+    this.isMinimized = false;
+    closeModal(restTimerModal);
+    if (floatingRestBadge) {
+      floatingRestBadge.style.display = 'none';
+    }
+    this.remaining = this.totalSeconds;
+    this.render();
+  }
+
+  complete() {
+    this.stopInterval();
+    this.remaining = 0;
+    this.render();
+
+    if (restStatusBadge) {
+      restStatusBadge.textContent = 'READY TO LIFT!';
+      restStatusBadge.classList.remove('paused');
+    }
+
+    soundManager.playRestGong();
+
+    setTimeout(() => {
+      this.dismiss();
+    }, 2800);
+  }
+
+  toggleModal() {
+    if (restTimerModal && (restTimerModal.style.display === 'flex' || restTimerModal.style.display === 'block')) {
+      this.dismiss();
+    } else {
+      if (this.intervalId) {
+        this.expand();
+      } else {
+        this.start();
+      }
+    }
+  }
+
+  updateNextExerciseLabel() {
+    const exName = currentExercise ? currentExercise.name : 'Next Set';
+    if (restNextExerciseLbl) restNextExerciseLbl.textContent = `Next Set • ${exName}`;
+    if (miniRestSub) miniRestSub.textContent = `Next: ${exName}`;
+  }
+
+  render() {
+    const rem = Math.max(0, this.remaining);
+    const mins = Math.floor(rem / 60);
+    const secs = rem % 60;
+    const formatted = mins > 0 ? `${mins}:${secs < 10 ? '0' : ''}${secs}` : `${secs}`;
+
+    if (restTimeDigits) restTimeDigits.textContent = formatted;
+    if (miniRestNum) miniRestNum.textContent = `${rem}`;
+
+    const ratio = this.totalSeconds > 0 ? Math.max(0, Math.min(1, rem / this.totalSeconds)) : 0;
+    const offset = this.CIRCUMFERENCE * (1 - ratio);
+    const miniOffset = this.MINI_CIRCUMFERENCE * (1 - ratio);
+
+    if (restRingFill) restRingFill.style.strokeDashoffset = offset.toFixed(2);
+    if (miniRingFill) miniRingFill.style.strokeDashoffset = miniOffset.toFixed(2);
+
+    if (restPauseResumeBtn) {
+      restPauseResumeBtn.textContent = this.isPaused ? 'Resume' : 'Pause';
+    }
+  }
+}
+
 // ---------------- Event Listeners & Wire-up ----------------
 function setupEventListeners() {
+  // Initialize Smart Rest Timer (GymMane Style)
+  restTimer = new RestTimerManager();
+  restTimer.init();
+
   // Start Workout
   startBtn.addEventListener('click', () => {
     soundManager.init();
@@ -1503,12 +1819,20 @@ function setupEventListeners() {
     });
   }
 
-  // Escape key closes modals
+  // Escape key closes modals, 'r' toggles Rest Timer
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeModal(exerciseModal);
       closeModal(finishSetModal);
       closeModal(logModal);
+      if (goalModal) closeModal(goalModal);
+      if (formModal) closeModal(formModal);
+      if (restTimer) restTimer.dismiss();
+    }
+    if (e.key === 't' || e.key === 'T') {
+      if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) return;
+      e.preventDefault();
+      if (restTimer) restTimer.toggleModal();
     }
   });
 
@@ -1559,7 +1883,18 @@ function setupEventListeners() {
     const weight = parseFloat(setWeightInput.value);
     logCompletedSet(weight);
     closeModal(finishSetModal);
+    if (restTimer && restTimer.autoStart) {
+      restTimer.start();
+    }
   });
+
+  // Rest Timer Button in Top Controls
+  if (restTimerBtn) {
+    restTimerBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (restTimer) restTimer.toggleModal();
+    });
+  }
 
   
   
