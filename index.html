@@ -1,162 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <base href="./">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#07080a">
     <title>RepVision - AI Biomechanical Workout & Rep Tracker</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&family=Syne:wght@700;800&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&family=Syne:wght@700;800&family=Space+Grotesk:wght@600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- MediaPipe Pose CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
     <!-- Premium Vector SVG Symbol Sprite -->
     <svg width="0" height="0" style="position:absolute;display:none" aria-hidden="true">
         <defs>
             <!-- Brand & Utilities -->
-            <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" fill="currentColor"/></symbol>
-            <symbol id="i-dumbbell" viewBox="0 0 24 24"><path d="M6 6v12M18 6v12M3 8.5v7M21 8.5v7M6 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-            <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7Zm4 10a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-flip" viewBox="0 0 24 24"><path d="M4 8h13l-3-3m6 11H7l3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-vol" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4Zm12-1a4 4 0 0 1 0 6m2.5-9a8 8 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4Zm12 0 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-tune" viewBox="0 0 24 24"><path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
-            <symbol id="i-history" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-close" viewBox="0 0 24 24"><path d="m18 6-12 12M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2m-6 5v6m4-6v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5L20 6.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
-            <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 5 5v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-            <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-            <symbol id="i-camera-front" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="7" r="1.5" fill="currentColor"/><circle cx="12" cy="17" r="1" fill="currentColor"/></symbol>
-            <symbol id="i-camera-side" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="7" cy="12" r="1.5" fill="currentColor"/><path d="M17 9v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+            
+            
+            <symbol id="i-motion" viewBox="0 0 24 24">
+                <circle cx="12" cy="5" r="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 7.5v6m0 0-3 5.5m3-5.5 3 5.5M8 10.5h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </symbol>
+            <symbol id="i-target" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+                <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+            </symbol>
+            <symbol id="i-music" viewBox="0 0 24 24">
+                <path d="M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm12-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </symbol>
+            <symbol id="i-upload" viewBox="0 0 24 24">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </symbol>
+            <symbol id="i-play" viewBox="0 0 24 24">
+                <polygon points="6 3 20 12 6 21 6 3" fill="currentColor"/>
+            </symbol>
+            <symbol id="i-pause" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16" fill="currentColor"/>
+                <rect x="14" y="4" width="4" height="16" fill="currentColor"/>
+            </symbol>
+            <symbol id="i-bolt" viewBox="0 0 24 24">
+                <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" fill="currentColor" />
+            </symbol>
+            <symbol id="i-dumbbell" viewBox="0 0 24 24">
+                <path d="M6 6v12M18 6v12M3 8.5v7M21 8.5v7M6 12h12" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" />
+            </symbol>
+            <symbol id="i-bell" viewBox="0 0 24 24">
+                <path d="M6 9a6 6 0 0 1 12 0c0 6 2 7 2 7H4s2-1 2-7Zm4 10a2 2 0 0 0 4 0" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-flip" viewBox="0 0 24 24">
+                <path d="M4 8h13l-3-3m6 11H7l3 3" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-vol" viewBox="0 0 24 24">
+                <path d="M4 10v4h4l5 4V6L8 10H4Zm12-1a4 4 0 0 1 0 6m2.5-9a8 8 0 0 1 0 12" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-mute" viewBox="0 0 24 24">
+                <path d="M4 10v4h4l5 4V6L8 10H4Zm12 0 5 5m0-5-5 5" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-reset" viewBox="0 0 24 24">
+                <path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-tune" viewBox="0 0 24 24">
+                <path d="M4 21v-7m0-4V3m8 18v-9m0-4V3m8 18v-5m0-4V3M1 14h6m2-6h6m2 8h6" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </symbol>
+            <symbol id="i-history" viewBox="0 0 24 24">
+                <path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-chevron-down" viewBox="0 0 24 24">
+                <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-chevron-right" viewBox="0 0 24 24">
+                <path d="m9 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-close" viewBox="0 0 24 24">
+                <path d="m18 6-12 12M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-trash" viewBox="0 0 24 24">
+                <path d="M3 6h18m-2 0v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6m3 0V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2m-6 5v6m4-6v6"
+                    fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-check" viewBox="0 0 24 24">
+                <path d="m4.5 12.5 5 5L20 6.5" fill="none" stroke="currentColor" stroke-width="2.4"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-plus" viewBox="0 0 24 24">
+                <path d="M12 5v14m-7-7h14" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" />
+            </symbol>
+            <symbol id="i-undo" viewBox="0 0 24 24">
+                <path d="M9 14 4 9l5-5M4 9h11a5 5 0 0 1 5 5v4" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+            </symbol>
+            <symbol id="i-search" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2" />
+                <path d="m20 20-3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            </symbol>
+            <symbol id="i-camera-front" viewBox="0 0 24 24">
+                <rect x="6" y="3" width="12" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.8" />
+                <circle cx="12" cy="7" r="1.5" fill="currentColor" />
+                <circle cx="12" cy="17" r="1" fill="currentColor" />
+            </symbol>
+            <symbol id="i-camera-side" viewBox="0 0 24 24">
+                <rect x="3" y="6" width="18" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.8" />
+                <circle cx="7" cy="12" r="1.5" fill="currentColor" />
+                <path d="M17 9v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+            </symbol>
 
             <!-- Muscle Categories Vector Symbols -->
             <symbol id="i-muscle-all" viewBox="0 0 24 24">
-                <rect x="3.5" y="3.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
-                <rect x="13.5" y="3.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
-                <rect x="3.5" y="13.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
-                <rect x="13.5" y="13.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/>
+                <rect x="3.5" y="3.5" width="7" height="7" rx="2" fill="none" stroke="currentColor"
+                    stroke-width="1.8" />
+                <rect x="13.5" y="3.5" width="7" height="7" rx="2" fill="none" stroke="currentColor"
+                    stroke-width="1.8" />
+                <rect x="3.5" y="13.5" width="7" height="7" rx="2" fill="none" stroke="currentColor"
+                    stroke-width="1.8" />
+                <rect x="13.5" y="13.5" width="7" height="7" rx="2" fill="none" stroke="currentColor"
+                    stroke-width="1.8" />
             </symbol>
             <symbol id="i-muscle-biceps" viewBox="0 0 24 24">
-                <path d="M5 16c0 3 3 5 7 5s7-2 7-5c0-4-3-6-5-7-1-3-4-5-7-4-1 3 0 6 2 8-2 1-4 2-4 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M11 12c1.5 1.5 2 3.5 2 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M5 16c0 3 3 5 7 5s7-2 7-5c0-4-3-6-5-7-1-3-4-5-7-4-1 3 0 6 2 8-2 1-4 2-4 3Z" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M11 12c1.5 1.5 2 3.5 2 5" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" />
             </symbol>
             <symbol id="i-muscle-triceps" viewBox="0 0 24 24">
-                <path d="M7 4h10l-2 7 3 9H6l3-9L7 4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 4v16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M7 4h10l-2 7 3 9H6l3-9L7 4Z" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M12 4v16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
             </symbol>
             <symbol id="i-muscle-chest" viewBox="0 0 24 24">
-                <path d="M4 6c4-1 7-3 8-3s4 2 8 3v7c0 5-4 8-8 9-4-1-8-4-8-9V6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 3v18M7 9c3 2 5 2 5 2s2 0 5-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M4 6c4-1 7-3 8-3s4 2 8 3v7c0 5-4 8-8 9-4-1-8-4-8-9V6Z" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M12 3v18M7 9c3 2 5 2 5 2s2 0 5-2" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" />
             </symbol>
             <symbol id="i-muscle-shoulders" viewBox="0 0 24 24">
-                <path d="M3 13c1-4 4-6 9-6s8 2 9 6l-3 5c-3-1-5-2-6-2s-3 1-6 2l-3-5Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 7v10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                <circle cx="12" cy="4" r="1.5" fill="currentColor"/>
+                <path d="M3 13c1-4 4-6 9-6s8 2 9 6l-3 5c-3-1-5-2-6-2s-3 1-6 2l-3-5Z" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M12 7v10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <circle cx="12" cy="4" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-muscle-back" viewBox="0 0 24 24">
-                <path d="M4 6h16l-3 12-5 3-5-3L4 6Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 6v15M8 10l4 3 4-3M7 14l5 3 5-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M4 6h16l-3 12-5 3-5-3L4 6Z" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M12 6v15M8 10l4 3 4-3M7 14l5 3 5-3" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" />
             </symbol>
             <symbol id="i-muscle-legs" viewBox="0 0 24 24">
-                <path d="M7 3h4l2 9-1 9H8l1-8-3-8l1-2Zm6 0h4l-1 2-3 8 1 8h-4l-1-9 2-9h1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M7 3h4l2 9-1 9H8l1-8-3-8l1-2Zm6 0h4l-1 2-3 8 1 8h-4l-1-9 2-9h1Z" fill="none"
+                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
             </symbol>
             <symbol id="i-muscle-core" viewBox="0 0 24 24">
-                <rect x="5" y="4" width="14" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
-                <path d="M12 4v16M5 9h14M5 14h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="5" y="4" width="14" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.8" />
+                <path d="M12 4v16M5 9h14M5 14h14" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" />
             </symbol>
             <symbol id="i-muscle-manual" viewBox="0 0 24 24">
-                <path d="M7 11V6a2 2 0 0 1 4 0v5M11 9a2 2 0 0 1 4 0v3M15 11a2 2 0 0 1 4 0v5c0 4-3 6-7 6s-7-2-7-6v-4a2 2 0 0 1 4 0v2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path
+                    d="M7 11V6a2 2 0 0 1 4 0v5M11 9a2 2 0 0 1 4 0v3M15 11a2 2 0 0 1 4 0v5c0 4-3 6-7 6s-7-2-7-6v-4a2 2 0 0 1 4 0v2"
+                    fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
             </symbol>
 
             <!-- Exercise Movements Vector Symbols -->
             <symbol id="i-ex-curl" viewBox="0 0 24 24">
-                <path d="M5 19h4l2-8-3-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="15" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
-                <path d="M18 10l3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                <path d="M15 16a6 6 0 0 0 5-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="2 2"/>
+                <path d="M5 19h4l2-8-3-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <circle cx="15" cy="7" r="3" fill="none" stroke="currentColor" stroke-width="1.8" />
+                <path d="M18 10l3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M15 16a6 6 0 0 0 5-6" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-dasharray="2 2" />
             </symbol>
             <symbol id="i-ex-extension" viewBox="0 0 24 24">
-                <path d="M12 21V9m0-6 4 4m-8 0 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M6 14h12M8 18h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M12 21V9m0-6 4 4m-8 0 4-4" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M6 14h12M8 18h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
             </symbol>
             <symbol id="i-ex-pushdown" viewBox="0 0 24 24">
-                <path d="M12 3v12m0 6-4-4m8 0-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M6 10h12M8 6h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M12 3v12m0 6-4-4m8 0-4 4" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M6 10h12M8 6h8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
             </symbol>
             <symbol id="i-ex-dip" viewBox="0 0 24 24">
-                <path d="M4 14h5v7M15 14h5v7M9 7h6v5H9z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="4" r="1.5" fill="currentColor"/>
+                <path d="M4 14h5v7M15 14h5v7M9 7h6v5H9z" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="12" cy="4" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-pushup" viewBox="0 0 24 24">
-                <path d="M3 18h18M6 15l6-3 7 3M12 12V7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="5" r="1.5" fill="currentColor"/>
+                <path d="M3 18h18M6 15l6-3 7 3M12 12V7" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="12" cy="5" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-press" viewBox="0 0 24 24">
-                <path d="M4 12h16M3 9v6M21 9v6M8 12v6M16 12v6M5 19h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 12h16M3 9v6M21 9v6M8 12v6M16 12v6M5 19h14" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
             </symbol>
             <symbol id="i-ex-shoulder-press" viewBox="0 0 24 24">
-                <path d="M3 8h18M2 5v6M22 5v6M12 12v9m-4-5 4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 8h18M2 5v6M22 5v6M12 12v9m-4-5 4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
             </symbol>
             <symbol id="i-ex-lateral-raise" viewBox="0 0 24 24">
-                <path d="M12 8v12M12 8 4 6M12 8l8-2M3 4v4M21 4v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="4" r="1.5" fill="currentColor"/>
+                <path d="M12 8v12M12 8 4 6M12 8l8-2M3 4v4M21 4v4" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="12" cy="4" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-front-raise" viewBox="0 0 24 24">
-                <path d="M7 20l4-9 8-3M19 6v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="7" cy="6" r="1.5" fill="currentColor"/>
+                <path d="M7 20l4-9 8-3M19 6v4" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="7" cy="6" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-pullup" viewBox="0 0 24 24">
-                <path d="M3 4h18M6 4v7l6 3 6-3V4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M12 17v4m-3-2 3-3 3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 4h18M6 4v7l6 3 6-3V4" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M12 17v4m-3-2 3-3 3 3" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
             </symbol>
             <symbol id="i-ex-pulldown" viewBox="0 0 24 24">
-                <path d="M4 4h16M12 4v9m-4-3 4 4 4-4M6 18h12M9 21h6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 4h16M12 4v9m-4-3 4 4 4-4M6 18h12M9 21h6" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
             </symbol>
             <symbol id="i-ex-row" viewBox="0 0 24 24">
-                <path d="M4 17l6-6 4 2 6-6M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="7" cy="7" r="1.5" fill="currentColor"/>
+                <path d="M4 17l6-6 4 2 6-6M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="7" cy="7" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-deadlift" viewBox="0 0 24 24">
-                <path d="M4 18h16M2 15v6M22 15v6M8 18l4-7 4 7M12 11V6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="4" r="1.5" fill="currentColor"/>
+                <path d="M4 18h16M2 15v6M22 15v6M8 18l4-7 4 7M12 11V6" fill="none" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="12" cy="4" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-squat" viewBox="0 0 24 24">
-                <path d="M6 19l4-6 3 3 3-6 2 9M6 8h12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="5" r="1.5" fill="currentColor"/>
+                <path d="M6 19l4-6 3 3 3-6 2 9M6 8h12" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="12" cy="5" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-lunge" viewBox="0 0 24 24">
-                <path d="M4 19l5-5 5 2 5-6M10 7l2 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="10" cy="4" r="1.5" fill="currentColor"/>
+                <path d="M4 19l5-5 5 2 5-6M10 7l2 7" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="10" cy="4" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-leg-ext" viewBox="0 0 24 24">
-                <path d="M5 6v12h7l5-5M17 13l4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M5 6v12h7l5-5M17 13l4 4" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
             </symbol>
             <symbol id="i-ex-glute-bridge" viewBox="0 0 24 24">
-                <path d="M3 18h18M6 18l5-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="6" cy="15" r="1.5" fill="currentColor"/>
+                <path d="M3 18h18M6 18l5-6 6 6" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="6" cy="15" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-situp" viewBox="0 0 24 24">
-                <path d="M4 18h16M6 18l5-8 7 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="11" cy="7" r="1.5" fill="currentColor"/>
+                <path d="M4 18h16M6 18l5-8 7 8" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="11" cy="7" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-leg-raise" viewBox="0 0 24 24">
-                <path d="M4 4h16M8 4v8l8-2M8 12l2 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
+                <path d="M4 4h16M8 4v8l8-2M8 12l2 8" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="8" cy="8" r="1.5" fill="currentColor" />
             </symbol>
             <symbol id="i-ex-plank" viewBox="0 0 24 24">
-                <path d="M3 17h18M5 14h14l-2-4H7l-2 4Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="6" cy="9" r="1.5" fill="currentColor"/>
+                <path d="M3 17h18M5 14h14l-2-4H7l-2 4Z" fill="none" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="6" cy="9" r="1.5" fill="currentColor" />
             </symbol>
         </defs>
     </svg>
@@ -166,24 +294,43 @@
         <header class="header">
             <div class="brand-group">
                 <div class="brand">
-                    <span class="logo-icon"><svg><use href="#i-bolt"/></svg></span>
+                    <span class="logo-icon"><svg>
+                            <use href="#i-bolt" />
+                        </svg></span>
                     <span class="title">RepVision</span>
                     <span class="status-pulse" title="Vision Engine Active"></span>
                 </div>
                 <!-- Exercise Selector Pill -->
-                <button id="exerciseSelectBtn" class="exercise-pill" type="button" aria-haspopup="dialog" title="Browse Exercise Library">
-                    <span class="exercise-pill-icon"><svg id="currentExerciseIcon"><use href="#i-ex-curl"/></svg></span>
+                <button id="exerciseSelectBtn" class="exercise-pill" type="button" aria-haspopup="dialog"
+                    title="Browse Exercise Library">
+                    <span class="exercise-pill-icon"><svg id="currentExerciseIcon">
+                            <use href="#i-ex-curl" />
+                        </svg></span>
                     <span id="currentExerciseName" class="exercise-name">Hammer Curl</span>
-                    <svg class="chevron"><use href="#i-chevron-down"/></svg>
+                    <svg class="chevron">
+                        <use href="#i-chevron-down" />
+                    </svg>
                 </button>
             </div>
 
             <div class="controls-top">
-                <button id="tuningBtn" class="icon-btn" type="button" title="Tuning Helper (d)"><svg><use href="#i-tune"/></svg><span class="lbl">Tune</span></button>
-                <button id="logBtn" class="icon-btn" type="button" title="Workout Session Log"><svg><use href="#i-history"/></svg><span class="lbl">Log</span></button>
-                <button id="testAudioBtn" class="icon-btn" type="button" title="Test sound"><svg><use href="#i-bell"/></svg></button>
-                <button id="cameraFlipBtn" class="icon-btn" type="button" title="Flip camera"><svg><use href="#i-flip"/></svg></button>
-                <button id="muteBtn" class="icon-btn" type="button" title="Toggle sound"><svg><use href="#i-vol"/></svg></button>
+                <button id="formGuideBtn" class="icon-btn" type="button" title="Exercise Form Demonstration"><svg><use href="#i-motion"/></svg><span class="lbl">Demo</span></button>
+                <button id="goalBtn" class="icon-btn" type="button" title="Set Goal & Motivation Sound"><svg><use href="#i-target"/></svg><span class="lbl">Goal</span></button>
+                <button id="tuningBtn" class="icon-btn" type="button" title="Tuning Helper (d)"><svg>
+                        <use href="#i-tune" />
+                    </svg><span class="lbl">Tune</span></button>
+                <button id="logBtn" class="icon-btn" type="button" title="Workout Session Log"><svg>
+                        <use href="#i-history" />
+                    </svg><span class="lbl">Log</span></button>
+                <button id="testAudioBtn" class="icon-btn" type="button" title="Test sound"><svg>
+                        <use href="#i-bell" />
+                    </svg></button>
+                <button id="cameraFlipBtn" class="icon-btn" type="button" title="Flip camera"><svg>
+                        <use href="#i-flip" />
+                    </svg></button>
+                <button id="muteBtn" class="icon-btn" type="button" title="Toggle sound"><svg>
+                        <use href="#i-vol" />
+                    </svg></button>
             </div>
         </header>
 
@@ -194,7 +341,10 @@
                     <!-- Populated dynamically with SVG muscle icons + text -->
                 </div>
                 <button id="toggleNavBtn" class="nav-toggle-btn" type="button" title="Collapse/Expand Exercise Dock">
-                    <svg viewBox="0 0 24 24" width="16" height="16"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+                    <svg viewBox="0 0 24 24" width="16" height="16">
+                        <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2"
+                            stroke-linecap="round" />
+                    </svg>
                 </button>
             </div>
             <div class="exercise-buttons-strip" id="quickExerciseStrip" role="toolbar" aria-label="Exercise Buttons">
@@ -226,9 +376,9 @@
             <div class="counter-card" id="counterCard" data-state="idle">
                 <div class="ring-wrapper">
                     <svg class="hud-ring" viewBox="0 0 120 120">
-                        <circle class="ring-bg" cx="60" cy="60" r="52"/>
-                        <circle class="ring-track" cx="60" cy="60" r="52"/>
-                        <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52"/>
+                        <circle class="ring-bg" cx="60" cy="60" r="52" />
+                        <circle class="ring-track" cx="60" cy="60" r="52" />
+                        <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52" />
                     </svg>
                     <div class="ring-core">
                         <span class="counter-header" id="counterHeaderLabel">REPS</span>
@@ -240,6 +390,7 @@
                     <div class="hud-title-row">
                         <span class="hud-exercise-title" id="hudExerciseTitle">Hammer Curl</span>
                         <span class="hud-view-pill" id="hudViewPill">Front</span>
+                        <span class="hud-goal-pill" id="hudGoalPill" title="Tap to set goal">Goal: 12</span>
                     </div>
                     <div class="counter-status" id="repStatus"><i class="dot"></i>READY</div>
                     <div class="angle-badge" id="angleBadge">Angle: --°</div>
@@ -248,16 +399,24 @@
                 <!-- HUD Action Buttons -->
                 <div class="hud-actions">
                     <button id="addRepBtn" class="hud-btn ok" type="button" title="Add 1 rep">
-                        <svg class="btn-icon"><use href="#i-plus"/></svg><span>+1</span>
+                        <svg class="btn-icon">
+                            <use href="#i-plus" />
+                        </svg><span>+1</span>
                     </button>
                     <button id="undoRepBtn" class="hud-btn" type="button" title="Undo rep">
-                        <svg class="btn-icon"><use href="#i-undo"/></svg>
+                        <svg class="btn-icon">
+                            <use href="#i-undo" />
+                        </svg>
                     </button>
                     <button id="resetBtn" class="hud-btn danger" type="button" title="Reset counter">
-                        <svg class="btn-icon"><use href="#i-reset"/></svg>
+                        <svg class="btn-icon">
+                            <use href="#i-reset" />
+                        </svg>
                     </button>
                     <button id="finishSetBtn" class="hud-btn primary" type="button" title="Finish and log set">
-                        <svg class="btn-icon"><use href="#i-check"/></svg><span>Finish</span>
+                        <svg class="btn-icon">
+                            <use href="#i-check" />
+                        </svg><span>Finish</span>
                     </button>
                 </div>
             </div>
@@ -265,7 +424,9 @@
             <!-- Camera Sightline & Motion Guidance Pill -->
             <div class="hint" id="placementHint">
                 <span class="hint-badge" id="hintViewBadge">
-                    <svg class="hint-icon" id="hintViewIcon"><use href="#i-camera-front"/></svg>
+                    <svg class="hint-icon" id="hintViewIcon">
+                        <use href="#i-camera-front" />
+                    </svg>
                     <span id="hintViewText">Front</span>
                 </span>
                 <span id="hintText">Extend past 150°, then curl below 60°</span>
@@ -277,20 +438,71 @@
                     <!-- Concentric Olympic Ring Hero Badge -->
                     <div class="modal-hero-badge">
                         <div class="hero-ring-glow"></div>
-                        <svg class="hero-icon" id="startHeroIcon"><use href="#i-ex-curl"/></svg>
+                        <svg class="hero-icon" id="startHeroIcon">
+                            <use href="#i-ex-curl" />
+                        </svg>
                     </div>
 
                     <h2 id="modalExerciseTitle">Hammer Curl</h2>
                     <div class="modal-badge-row">
                         <span class="view-tag" id="modalViewTag">
-                            <svg class="tag-icon"><use href="#i-camera-front"/></svg>
+                            <svg class="tag-icon">
+                                <use href="#i-camera-front" />
+                            </svg>
                             <span id="modalViewTagText">Front View</span>
                         </span>
                         <span class="muscle-tag" id="modalMuscleTag">Biceps</span>
                         <span class="range-tag" id="modalRangeTag">150° → 60°</span>
                     </div>
 
-                    <p id="modalTipText">Stand back so both arms are in frame. Each full curl counts as one rep, with voice counting and audio feedback.</p>
+                    <p id="modalTipText">Stand back so both arms are in frame. Each full curl counts as one rep, with
+                        voice counting and audio feedback.</p>
+
+                    
+                    <!-- Target Goal & Motivation Sound Section -->
+                    <div class="start-target-card">
+                        <div class="target-card-row">
+                            <div class="target-title-bar">
+                                <svg class="target-icon"><use href="#i-target"/></svg>
+                                <span class="target-label">Target Goal</span>
+                                <span class="target-val-badge" id="startGoalValBadge">12 reps</span>
+                            </div>
+                            <div class="start-goal-chips" id="startGoalChips">
+                                <button type="button" class="start-chip" data-val="8">8</button>
+                                <button type="button" class="start-chip" data-val="10">10</button>
+                                <button type="button" class="start-chip active" data-val="12">12</button>
+                                <button type="button" class="start-chip" data-val="15">15</button>
+                                <button type="button" class="start-chip" data-val="20">20</button>
+                                <div class="start-custom-wrap">
+                                    <input type="number" id="startCustomGoalInput" min="1" max="500" value="12" title="Custom goal">
+                                    <span class="custom-unit-text" id="startCustomGoalUnit">reps</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="target-card-row sound-row">
+                            <div class="sound-title-bar">
+                                <svg class="sound-icon"><use href="#i-music"/></svg>
+                                <span class="sound-label">Motivation Audio</span>
+                                <span class="sound-tag" id="startSoundStatusTag">Fanfare</span>
+                            </div>
+                            <div class="start-sound-controls">
+                                <span class="sound-name-label" id="startSoundNameLabel">Default Celebration Fanfare</span>
+                                <div class="sound-mini-btns">
+                                    <button type="button" id="startPreviewSoundBtn" class="sound-mini-btn" title="Preview Audio">
+                                        <svg><use href="#i-play"/></svg>
+                                    </button>
+                                    <label for="startAudioFileInput" class="sound-mini-btn upload" title="Upload Audio File (.mp3, .wav, .m4a)">
+                                        <svg><use href="#i-upload"/></svg>
+                                    </label>
+                                    <input type="file" id="startAudioFileInput" accept="audio/*" style="display:none;">
+                                    <button type="button" id="startRemoveSoundBtn" class="sound-mini-btn remove" style="display:none;" title="Reset Audio">
+                                        <svg><use href="#i-trash"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Quick Pick Section -->
                     <div class="start-carousel-section">
@@ -306,22 +518,29 @@
                     <div class="start-btn-group">
                         <button id="startBtn" class="primary-btn" type="button">
                             <span>START WORKOUT</span>
-                            <svg class="btn-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+                            <svg class="btn-arrow" viewBox="0 0 24 24">
+                                <path d="M5 12h14m-6-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2"
+                                    stroke-linecap="round" />
+                            </svg>
                         </button>
                         <button id="startChooseExBtn" class="secondary-btn" type="button">
-                            <svg class="btn-icon"><use href="#i-search"/></svg>
+                            <svg class="btn-icon">
+                                <use href="#i-search" />
+                            </svg>
                             <span>Browse Exercise Catalog (26)</span>
                         </button>
                     </div>
 
-                    <span class="permission-note">Camera access required for on-device computer vision. Video is never uploaded.</span>
+                    <span class="permission-note">Camera access required for on-device computer vision. Video is never
+                        uploaded.</span>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Exercise Catalog Modal / Bottom Sheet -->
-    <div id="exerciseModal" class="modal-sheet" style="display:none;" aria-hidden="true" role="dialog" aria-modal="true">
+    <div id="exerciseModal" class="modal-sheet" style="display:none;" aria-hidden="true" role="dialog"
+        aria-modal="true">
         <div class="sheet-backdrop" id="exerciseBackdrop"></div>
         <div class="sheet-container">
             <div class="sheet-drag-handle"></div>
@@ -331,14 +550,23 @@
                     <h3>Exercise Catalog</h3>
                     <span class="sheet-sub">26 AI-tracked & manual movements</span>
                 </div>
-                <button id="closeExerciseBtn" class="sheet-close-btn" type="button" title="Close"><svg><use href="#i-close"/></svg></button>
+                <button id="closeExerciseBtn" class="sheet-close-btn" type="button" title="Close"><svg>
+                        <use href="#i-close" />
+                    </svg></button>
             </div>
 
             <!-- Instant Search Bar Inside Catalog -->
             <div class="catalog-search-bar">
-                <svg class="search-icon"><use href="#i-search"/></svg>
-                <input type="text" id="catalogSearchInput" placeholder="Search exercises (e.g. Squat, Pushup, Biceps)..." autocomplete="off" spellcheck="false">
-                <button id="catalogClearSearch" class="clear-search-btn" style="display:none;" type="button" title="Clear search"><svg><use href="#i-close"/></svg></button>
+                <svg class="search-icon">
+                    <use href="#i-search" />
+                </svg>
+                <input type="text" id="catalogSearchInput"
+                    placeholder="Search exercises (e.g. Squat, Pushup, Biceps)..." autocomplete="off"
+                    spellcheck="false">
+                <button id="catalogClearSearch" class="clear-search-btn" style="display:none;" type="button"
+                    title="Clear search"><svg>
+                        <use href="#i-close" />
+                    </svg></button>
             </div>
 
             <!-- Muscle Category Filter Tabs -->
@@ -354,7 +582,8 @@
     </div>
 
     <!-- Finish Set Modal -->
-    <div id="finishSetModal" class="modal-sheet" style="display:none;" aria-hidden="true" role="dialog" aria-modal="true">
+    <div id="finishSetModal" class="modal-sheet" style="display:none;" aria-hidden="true" role="dialog"
+        aria-modal="true">
         <div class="sheet-backdrop" id="finishBackdrop"></div>
         <div class="sheet-container finish-container">
             <div class="sheet-drag-handle"></div>
@@ -363,7 +592,9 @@
                     <h3>Complete Set</h3>
                     <span class="sheet-sub">Record performance to your session log</span>
                 </div>
-                <button id="closeFinishBtn" class="sheet-close-btn" type="button" title="Close"><svg><use href="#i-close"/></svg></button>
+                <button id="closeFinishBtn" class="sheet-close-btn" type="button" title="Close"><svg>
+                        <use href="#i-close" />
+                    </svg></button>
             </div>
 
             <div class="finish-body">
@@ -404,7 +635,9 @@
                     <h3>Today's Workout Log</h3>
                     <span class="sheet-sub" id="logSummaryText">0 sets logged</span>
                 </div>
-                <button id="closeLogBtn" class="sheet-close-btn" type="button" title="Close"><svg><use href="#i-close"/></svg></button>
+                <button id="closeLogBtn" class="sheet-close-btn" type="button" title="Close"><svg>
+                        <use href="#i-close" />
+                    </svg></button>
             </div>
 
             <div class="log-body">
@@ -416,11 +649,143 @@
         </div>
     </div>
 
+    
+    <!-- Workout Goal & Motivation Sound Modal -->
+    <div id="goalModal" class="modal-sheet" style="display:none;" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="sheet-backdrop" id="goalBackdrop"></div>
+        <div class="sheet-container goal-sheet-container">
+            <div class="sheet-drag-handle"></div>
+            <div class="sheet-header">
+                <div class="sheet-title-group">
+                    <h3>Target Goal & Audio</h3>
+                    <span class="sheet-sub">Custom target & motivation celebration</span>
+                </div>
+                <button id="closeGoalBtn" class="sheet-close-btn" type="button" title="Close"><svg><use href="#i-close"/></svg></button>
+            </div>
+
+            <div class="goal-modal-body">
+                <!-- Goal Reps Section -->
+                <div class="goal-section-card">
+                    <div class="goal-card-header">
+                        <div class="goal-title-group">
+                            <svg class="goal-card-icon"><use href="#i-target"/></svg>
+                            <span class="goal-card-title">Target Goal</span>
+                        </div>
+                        <span class="goal-highlight-val" id="modalGoalDisplayVal">12 Reps</span>
+                    </div>
+                    <p class="goal-desc">Choose or enter target reps/seconds. RepVision plays your motivation audio when reached.</p>
+                    <div class="goal-preset-chips" id="goalPresetChips">
+                        <button type="button" class="preset-chip" data-val="8">8</button>
+                        <button type="button" class="preset-chip" data-val="10">10</button>
+                        <button type="button" class="preset-chip active" data-val="12">12</button>
+                        <button type="button" class="preset-chip" data-val="15">15</button>
+                        <button type="button" class="preset-chip" data-val="20">20</button>
+                        <button type="button" class="preset-chip" data-val="25">25</button>
+                    </div>
+                    <div class="custom-goal-row">
+                        <label for="customGoalInput">Custom Target:</label>
+                        <div class="input-unit-wrap">
+                            <input type="number" id="customGoalInput" min="1" max="500" value="12">
+                            <span class="unit-label" id="customGoalUnit">reps</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Motivation Sound Upload Section -->
+                <div class="goal-section-card">
+                    <div class="goal-card-header">
+                        <div class="goal-title-group">
+                            <svg class="goal-card-icon"><use href="#i-music"/></svg>
+                            <span class="goal-card-title">Motivation Sound</span>
+                        </div>
+                        <span class="sound-badge-active" id="modalSoundStatusBadge">Default Fanfare</span>
+                    </div>
+                    <p class="goal-desc">Upload your favorite hype track, song clip, or motivational chant (.mp3, .wav, .m4a, .ogg) to celebrate reaching your goal.</p>
+
+                    <div class="sound-uploader-box">
+                        <div class="sound-file-display">
+                            <div class="file-icon-wrap"><svg><use href="#i-music"/></svg></div>
+                            <div class="file-details">
+                                <span class="file-name" id="modalSoundFileName">Default Celebration Fanfare</span>
+                                <span class="file-hint" id="modalSoundFileHint">Plays automatically when target is reached</span>
+                            </div>
+                        </div>
+
+                        <div class="sound-action-btns">
+                            <button type="button" id="modalPreviewSoundBtn" class="sound-action-btn primary" title="Play / Stop Preview">
+                                <svg class="btn-icon"><use href="#i-play"/></svg>
+                                <span id="previewBtnLabel">Preview</span>
+                            </button>
+                            <label for="modalAudioFileInput" class="sound-action-btn upload">
+                                <svg class="btn-icon"><use href="#i-upload"/></svg>
+                                <span>Upload Audio</span>
+                            </label>
+                            <input type="file" id="modalAudioFileInput" accept="audio/*" style="display:none;">
+                            <button type="button" id="modalRemoveSoundBtn" class="sound-action-btn danger" style="display:none;" title="Reset to Default">
+                                <svg class="btn-icon"><use href="#i-trash"/></svg>
+                                <span>Reset</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="saveGoalBtn" class="primary-btn" style="margin-top:4px;">
+                    <span>SAVE & CLOSE</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Exercise Form Animation Modal (Mid-Workout Guide) -->
+    <div id="formModal" class="modal-sheet" style="display:none;" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="sheet-backdrop" id="formBackdrop"></div>
+        <div class="sheet-container form-sheet-container">
+            <div class="sheet-drag-handle"></div>
+            <div class="sheet-header">
+                <div class="sheet-title-group">
+                    <h3 id="formModalTitle">Exercise Form Guide</h3>
+                    <span class="sheet-sub" id="formModalSub">Biomechanical angle demonstration</span>
+                </div>
+                <button id="closeFormBtn" class="sheet-close-btn" type="button" title="Close"><svg><use href="#i-close"/></svg></button>
+            </div>
+            <div class="form-modal-body">
+                <div class="exercise-demo-stage large" id="formModalDemoStage">
+                    <div class="demo-stage-header">
+                        <div class="demo-badge-group">
+                            <span class="demo-tag" id="formModalViewBadge">FRONT VIEW</span>
+                            <span class="demo-angle-pill" id="formModalAngleBadge">150° → 60°</span>
+                        </div>
+                        <button type="button" class="demo-play-btn" id="formModalPlayBtn" title="Play / Pause">
+                            <svg><use href="#i-pause"/></svg>
+                        </button>
+                    </div>
+                    <div class="demo-canvas-wrap">
+                        <canvas id="formModalAnimCanvas"></canvas>
+                    </div>
+                    <div class="demo-stage-footer">
+                        <span class="demo-phase-lbl" id="formModalPhaseLabel">ACTIVE</span>
+                        <span class="demo-angle-live" id="formModalAngleLive">--°</span>
+                    </div>
+                </div>
+                <div class="form-tip-card">
+                    <svg class="tip-icon"><use href="#i-camera-front"/></svg>
+                    <div class="tip-content">
+                        <span class="tip-title">Camera & Joint Setup</span>
+                        <p id="formModalTipText">Stand back so tracked joints remain visible throughout the full movement.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Live Biomechanical Angle Tuning HUD Panel -->
     <div id="tuningPanel" class="tuning-panel" style="display:none;" aria-label="Biomechanical Tuning Helper">
         <div class="tuning-header">
             <span class="tuning-title">Biomechanical Tuning</span>
-            <button id="closeTuningBtn" class="tuning-close-btn" type="button" title="Close"><svg><use href="#i-close"/></svg></button>
+            <button id="closeTuningBtn" class="tuning-close-btn" type="button" title="Close"><svg>
+                    <use href="#i-close" />
+                </svg></button>
         </div>
         <div class="tuning-body">
             <div class="tune-metrics">
@@ -457,7 +822,9 @@
 
     <script src="exercises.js"></script>
     <script src="counter.js"></script>
+    <script src="animator.js"></script>
     <script src="app.js"></script>
     <script src="ui.js"></script>
 </body>
+
 </html>

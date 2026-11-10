@@ -58,8 +58,9 @@ class SoundManager {
     this.bufferCache = new Map();
 
     this.baseUrl = new URL('.', window.location.href).href;
-    this.custom20Url = new URL('sounds/custom_20_plus.mp3', this.baseUrl).href;
-    this.custom35Url = new URL('sounds/custom_35_plus.mp3', this.baseUrl).href;
+    this.customMotivationUrl = null;
+    this.customMotivationName = '';
+    this.currentAudioElement = null;
   }
 
   init() {
@@ -96,8 +97,6 @@ class SoundManager {
 
   preloadKeySounds() {
     if (!this.audioCtx) return;
-    this.loadAudioBuffer(this.custom20Url);
-    this.loadAudioBuffer(this.custom35Url);
     for (let i = 1; i <= 5; i++) {
       this.loadAudioBuffer(new URL(`sounds/${i}.wav`, this.baseUrl).href);
     }
@@ -205,18 +204,77 @@ class SoundManager {
     }
   }
 
-  playRep(num) {
+  setCustomMotivationAudio(dataUrl, fileName) {
+    this.customMotivationUrl = dataUrl;
+    this.customMotivationName = fileName || 'Custom Motivation Audio';
+    this.stopMotivationSound();
+  }
+
+  async playMotivationSound() {
+    if (this.muted) return;
+    this.init();
+
+    this.stopMotivationSound();
+
+    if (this.customMotivationUrl) {
+      try {
+        const audio = new Audio(this.customMotivationUrl);
+        this.currentAudioElement = audio;
+        audio.volume = 1.0;
+        await audio.play();
+        return;
+      } catch (e) {
+        console.warn('Custom motivation audio playback fallback:', e);
+      }
+    }
+
+    // Default celebratory athletic fanfare (triumphant multi-oscillator chord)
+    this.playFanfare();
+  }
+
+  playFanfare() {
+    if (this.muted || !this.audioCtx) return;
+    try {
+      const now = this.audioCtx.currentTime;
+      const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+      notes.forEach((freq, idx) => {
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+        gain.gain.setValueAtTime(0, now + idx * 0.08);
+        gain.gain.linearRampToValueAtTime(0.35, now + idx * 0.08 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.55);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(now + idx * 0.08);
+        osc.stop(now + idx * 0.08 + 0.55);
+      });
+    } catch (e) {}
+  }
+
+  stopMotivationSound() {
+    if (this.currentAudioElement) {
+      try {
+        this.currentAudioElement.pause();
+        this.currentAudioElement.currentTime = 0;
+      } catch (e) {}
+      this.currentAudioElement = null;
+    }
+  }
+
+  playRep(num, targetGoal = 0) {
     if (this.muted) return;
     this.init();
 
     // 1. Instant bell chime SFX
     this.playChime();
 
-    // 2. Tiered custom motivation/milestone audio
-    if (num >= 35) {
-      this.playSoundUrl(this.custom35Url, 1.0);
-    } else if (num >= 20) {
-      this.playSoundUrl(this.custom20Url, 1.0);
+    // 2. Target Goal Motivation Trigger
+    if (targetGoal > 0 && num === targetGoal) {
+      this.playMotivationSound();
+      this.speak(`Goal of ${targetGoal} reached! Fantastic work!`);
+      return;
     }
 
     // 3. Voice counting
@@ -260,6 +318,117 @@ class SoundManager {
 
 // ---------------- Application State & Initialization ----------------
 const soundManager = new SoundManager();
+
+// ---------------- Goal & Custom Motivation Audio State & Storage ----------------
+let currentGoalReps  = parseInt(localStorage.getItem('repvision_target_goal') || '12', 10);
+let currentGoalTimer = parseInt(localStorage.getItem('repvision_target_timer_goal') || '60', 10);
+let goalReachedThisSet = false;
+let isPreviewPlaying = false;
+
+const DB_NAME = 'repvision_media_db';
+const STORE_NAME = 'audio_files';
+
+function openAudioDB() {
+  return new Promise((resolve, reject) => {
+    if (!window.indexedDB) {
+      resolve(null);
+      return;
+    }
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME);
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => resolve(null);
+  });
+}
+
+async function saveMotivationAudioToStorage(dataUrl, fileName) {
+  try {
+    const db = await openAudioDB();
+    if (db) {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).put({ dataUrl, fileName, timestamp: Date.now() }, 'custom_motivation');
+    }
+  } catch (e) {}
+  try {
+    localStorage.setItem('repvision_motivation_name', fileName);
+  } catch (e) {}
+}
+
+async function loadMotivationAudioFromStorage() {
+  try {
+    const db = await openAudioDB();
+    if (db) {
+      return new Promise((resolve) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const req = tx.objectStore(STORE_NAME).get('custom_motivation');
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => resolve(null);
+      });
+    }
+  } catch (e) {}
+  try {
+    const fileName = localStorage.getItem('repvision_motivation_name');
+    return fileName ? { fileName } : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+async function clearMotivationAudioFromStorage() {
+  try {
+    const db = await openAudioDB();
+    if (db) {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).delete('custom_motivation');
+    }
+  } catch (e) {}
+  try {
+    localStorage.removeItem('repvision_motivation_name');
+    localStorage.removeItem('repvision_motivation_sound');
+  } catch (e) {}
+}
+
+function getActiveGoal() {
+  if (!currentExercise) return currentGoalReps;
+  return currentExercise.mode === 'timer' ? currentGoalTimer : currentGoalReps;
+}
+
+function setActiveGoal(val) {
+  const num = Math.max(1, parseInt(val, 10) || 1);
+  if (currentExercise && currentExercise.mode === 'timer') {
+    currentGoalTimer = num;
+    try { localStorage.setItem('repvision_target_timer_goal', num); } catch (e) {}
+  } else {
+    currentGoalReps = num;
+    try { localStorage.setItem('repvision_target_goal', num); } catch (e) {}
+  }
+  updateGoalUI();
+
+  // Update Animation Stages
+  if (startAnimator && currentExercise) {
+    startAnimator.setExercise(currentExercise);
+    if (demoViewBadge) demoViewBadge.textContent = (currentExercise.view || 'front').toUpperCase() + ' VIEW';
+    if (demoAngleBadge) demoAngleBadge.textContent = `${currentExercise.start}° ➔ ${currentExercise.end}°`;
+  }
+  if (formModalAnimator && currentExercise) {
+    formModalAnimator.setExercise(currentExercise);
+    const vBadge = document.getElementById('formModalViewBadge');
+    const aBadge = document.getElementById('formModalAngleBadge');
+    const tip = document.getElementById('formModalTipText');
+    const title = document.getElementById('formModalTitle');
+    if (vBadge) vBadge.textContent = (currentExercise.view || 'front').toUpperCase() + ' VIEW';
+    if (aBadge) aBadge.textContent = `${currentExercise.start}° ➔ ${currentExercise.end}°`;
+    if (tip) tip.textContent = currentExercise.tip || 'Maintain steady form throughout the full movement.';
+    if (title) title.textContent = `${currentExercise.name} Form Guide`;
+  }
+
+}
+
 
 // DOM Elements
 const videoElement       = document.getElementById('webcam');
@@ -341,6 +510,59 @@ const logItemsList       = document.getElementById('logItemsList');
 const logSummaryText     = document.getElementById('logSummaryText');
 const clearAllLogsBtn    = document.getElementById('clearAllLogsBtn');
 
+
+// Goal & Motivation Sound Elements
+const goalBtn              = document.getElementById('goalBtn');
+const goalModal            = document.getElementById('goalModal');
+const goalBackdrop         = document.getElementById('goalBackdrop');
+const closeGoalBtn         = document.getElementById('closeGoalBtn');
+const saveGoalBtn          = document.getElementById('saveGoalBtn');
+
+const hudGoalPill          = document.getElementById('hudGoalPill');
+const startGoalValBadge    = document.getElementById('startGoalValBadge');
+const modalGoalDisplayVal  = document.getElementById('modalGoalDisplayVal');
+
+const startGoalChips       = document.getElementById('startGoalChips');
+const startCustomGoalInput = document.getElementById('startCustomGoalInput');
+const startCustomGoalUnit  = document.getElementById('startCustomGoalUnit');
+
+const goalPresetChips      = document.getElementById('goalPresetChips');
+const customGoalInput      = document.getElementById('customGoalInput');
+const customGoalUnit       = document.getElementById('customGoalUnit');
+
+const startSoundStatusTag  = document.getElementById('startSoundStatusTag');
+const startSoundNameLabel  = document.getElementById('startSoundNameLabel');
+const startPreviewSoundBtn = document.getElementById('startPreviewSoundBtn');
+const startAudioFileInput  = document.getElementById('startAudioFileInput');
+const startRemoveSoundBtn  = document.getElementById('startRemoveSoundBtn');
+
+const modalSoundStatusBadge = document.getElementById('modalSoundStatusBadge');
+const modalSoundFileName   = document.getElementById('modalSoundFileName');
+const modalSoundFileHint   = document.getElementById('modalSoundFileHint');
+const modalPreviewSoundBtn = document.getElementById('modalPreviewSoundBtn');
+const previewBtnLabel      = document.getElementById('previewBtnLabel');
+const modalAudioFileInput  = document.getElementById('modalAudioFileInput');
+const modalRemoveSoundBtn  = document.getElementById('modalRemoveSoundBtn');
+
+
+// Exercise Animation Engine DOM Elements
+const startExerciseAnimCanvas = document.getElementById('startExerciseAnimCanvas');
+const formModalAnimCanvas     = document.getElementById('formModalAnimCanvas');
+const demoPlayToggleBtn       = document.getElementById('demoPlayToggleBtn');
+const demoViewBadge           = document.getElementById('demoViewBadge');
+const demoAngleBadge          = document.getElementById('demoAngleBadge');
+const demoPhaseLabel          = document.getElementById('demoPhaseLabel');
+const demoAngleLive           = document.getElementById('demoAngleLive');
+
+const formGuideBtn            = document.getElementById('formGuideBtn');
+const formModal               = document.getElementById('formModal');
+const closeFormBtn            = document.getElementById('closeFormBtn');
+const formBackdrop            = document.getElementById('formBackdrop');
+const formModalPlayBtn        = document.getElementById('formModalPlayBtn');
+
+let startAnimator = null;
+let formModalAnimator = null;
+
 const tuningPanel        = document.getElementById('tuningPanel');
 const closeTuningBtn     = document.getElementById('closeTuningBtn');
 const tuneAngle          = document.getElementById('tuneAngle');
@@ -400,8 +622,20 @@ function selectExercise(exerciseId) {
   } catch (e) {}
 
   // Re-initialize RepCounter with active exercise config
+  goalReachedThisSet = false;
   repCounter = new RepCounter(currentExercise, (count) => {
-    soundManager.playRep(count);
+    const goal = getActiveGoal();
+    soundManager.playRep(count, goal);
+
+    if (goal > 0 && count === goal && !goalReachedThisSet) {
+      goalReachedThisSet = true;
+      if (counterCard) {
+        counterCard.classList.add('goal-achieved');
+        setTimeout(() => counterCard.classList.remove('goal-achieved'), 2400);
+      }
+      if (hudGoalPill) hudGoalPill.classList.add('achieved');
+      if (repStatusEl) repStatusEl.innerHTML = '<i class="dot ok"></i>GOAL REACHED! 🎉';
+    }
   });
   window.currentRepCounter = repCounter;
 
@@ -485,6 +719,7 @@ function selectExercise(exerciseId) {
 
   // Reset count display
   updateHUDDisplays();
+  updateGoalUI();
 
   // Update Start Button Text
   if (startBtn) {
@@ -537,6 +772,128 @@ function updateHUDDisplays() {
 
 // ---------------- Direct Exercise Buttons on Website ----------------
 let currentNavCategory = 'all';
+
+
+// ---------------- Goal & Motivation UI Controllers ----------------
+function updateGoalUI() {
+  const goal = getActiveGoal();
+  const isTimer = currentExercise && currentExercise.mode === 'timer';
+  const unitText = isTimer ? 's' : 'reps';
+
+  if (hudGoalPill) {
+    hudGoalPill.textContent = `Goal: ${goal}${isTimer ? 's' : ''}`;
+    if (repCounter && repCounter.reps >= goal) {
+      hudGoalPill.classList.add('achieved');
+    } else {
+      hudGoalPill.classList.remove('achieved');
+    }
+  }
+
+  if (startGoalValBadge) {
+    startGoalValBadge.textContent = `${goal} ${unitText}`;
+  }
+  if (modalGoalDisplayVal) {
+    modalGoalDisplayVal.textContent = `${goal} ${unitText}`;
+  }
+
+  if (startCustomGoalInput) startCustomGoalInput.value = goal;
+  if (customGoalInput) customGoalInput.value = goal;
+  if (startCustomGoalUnit) startCustomGoalUnit.textContent = unitText;
+  if (customGoalUnit) customGoalUnit.textContent = unitText;
+
+  // Sync Start Screen Chips
+  if (startGoalChips) {
+    startGoalChips.querySelectorAll('.start-chip').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.val, 10) === goal);
+    });
+  }
+
+  // Sync Modal Chips
+  if (goalPresetChips) {
+    goalPresetChips.querySelectorAll('.preset-chip').forEach(btn => {
+      btn.classList.toggle('active', parseInt(btn.dataset.val, 10) === goal);
+    });
+  }
+}
+
+function updateMotivationSoundUI(fileName) {
+  const isCustom = Boolean(fileName && soundManager.customMotivationUrl);
+  const displayName = isCustom ? fileName : 'Default Celebration Fanfare';
+  const tagText = isCustom ? 'Custom Track' : 'Fanfare';
+
+  if (startSoundStatusTag) startSoundStatusTag.textContent = tagText;
+  if (startSoundNameLabel) startSoundNameLabel.textContent = displayName;
+  if (modalSoundStatusBadge) modalSoundStatusBadge.textContent = tagText;
+  if (modalSoundFileName) modalSoundFileName.textContent = displayName;
+  if (modalSoundFileHint) {
+    modalSoundFileHint.textContent = isCustom 
+      ? 'Custom user track plays when your goal is achieved' 
+      : 'Plays automatically when target is reached';
+  }
+
+  if (startRemoveSoundBtn) startRemoveSoundBtn.style.display = isCustom ? 'grid' : 'none';
+  if (modalRemoveSoundBtn) modalRemoveSoundBtn.style.display = isCustom ? 'inline-flex' : 'none';
+}
+
+function handleAudioFileUpload(file) {
+  if (!file) return;
+  if (file.size > 25 * 1024 * 1024) {
+    alert('Please choose an audio file under 25MB.');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const dataUrl = e.target.result;
+    const name = file.name;
+    soundManager.setCustomMotivationAudio(dataUrl, name);
+    await saveMotivationAudioToStorage(dataUrl, name);
+    updateMotivationSoundUI(name);
+
+    // Play 3-second instant preview
+    soundManager.playMotivationSound();
+    setTimeout(() => soundManager.stopMotivationSound(), 3500);
+  };
+  reader.readAsDataURL(file);
+}
+
+function togglePreviewMotivationAudio() {
+  if (isPreviewPlaying) {
+    soundManager.stopMotivationSound();
+    isPreviewPlaying = false;
+    updatePreviewButtons(false);
+  } else {
+    soundManager.playMotivationSound();
+    isPreviewPlaying = true;
+    updatePreviewButtons(true);
+    setTimeout(() => {
+      if (isPreviewPlaying) {
+        soundManager.stopMotivationSound();
+        isPreviewPlaying = false;
+        updatePreviewButtons(false);
+      }
+    }, 6000);
+  }
+}
+
+function updatePreviewButtons(playing) {
+  const iconHref = playing ? '#i-pause' : '#i-play';
+  if (startPreviewSoundBtn) {
+    startPreviewSoundBtn.innerHTML = `<svg><use href="${iconHref}"/></svg>`;
+  }
+  if (modalPreviewSoundBtn) {
+    modalPreviewSoundBtn.innerHTML = `<svg class="btn-icon"><use href="${iconHref}"/></svg><span id="previewBtnLabel">${playing ? 'Stop' : 'Preview'}</span>`;
+  }
+}
+
+async function removeCustomMotivationAudio() {
+  soundManager.stopMotivationSound();
+  soundManager.setCustomMotivationAudio(null, '');
+  await clearMotivationAudioFromStorage();
+  updateMotivationSoundUI(null);
+  updatePreviewButtons(false);
+  isPreviewPlaying = false;
+}
 
 function initQuickExerciseBar() {
   if (!quickMuscleStrip || !quickExerciseStrip) return;
@@ -770,6 +1127,9 @@ function logCompletedSet(weight = null) {
   logs.unshift(newSet);
   saveSessionLogs(logs);
 
+  goalReachedThisSet = false;
+  soundManager.stopMotivationSound();
+  if (hudGoalPill) hudGoalPill.classList.remove('achieved');
   soundManager.playChime();
   repCounter.reset();
   updateHUDDisplays();
@@ -1168,6 +1528,9 @@ function setupEventListeners() {
   });
 
   resetBtn.addEventListener('click', () => {
+    goalReachedThisSet = false;
+    soundManager.stopMotivationSound();
+    if (hudGoalPill) hudGoalPill.classList.remove('achieved');
     repCounter.reset();
     soundManager.playReset();
     updateHUDDisplays();
@@ -1197,6 +1560,163 @@ function setupEventListeners() {
     logCompletedSet(weight);
     closeModal(finishSetModal);
   });
+
+  
+  
+  // Exercise Animator Play / Pause Toggles
+  if (demoPlayToggleBtn && startAnimator) {
+    demoPlayToggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const playing = startAnimator.togglePlay();
+      demoPlayToggleBtn.innerHTML = `<svg><use href="${playing ? '#i-pause' : '#i-play'}"/></svg>`;
+    });
+  }
+
+  // Form Guide Modal Controls
+  if (formGuideBtn) {
+    formGuideBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (formModalAnimator && currentExercise) {
+        formModalAnimator.setExercise(currentExercise);
+        formModalAnimator.play();
+      }
+      openModal(formModal);
+    });
+  }
+  if (closeFormBtn) {
+    closeFormBtn.addEventListener('click', () => {
+      if (formModalAnimator) formModalAnimator.pause();
+      closeModal(formModal);
+    });
+  }
+  if (formBackdrop) {
+    formBackdrop.addEventListener('click', () => {
+      if (formModalAnimator) formModalAnimator.pause();
+      closeModal(formModal);
+    });
+  }
+  if (formModalPlayBtn && formModalAnimator) {
+    formModalPlayBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const playing = formModalAnimator.togglePlay();
+      formModalPlayBtn.innerHTML = `<svg><use href="${playing ? '#i-pause' : '#i-play'}"/></svg>`;
+    });
+  }
+
+  // Goal Modal & Pill Triggers
+  if (goalBtn) {
+    goalBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      updateGoalUI();
+      openModal(goalModal);
+    });
+  }
+  if (hudGoalPill) {
+    hudGoalPill.addEventListener('click', (e) => {
+      e.preventDefault();
+      updateGoalUI();
+      openModal(goalModal);
+    });
+  }
+  if (closeGoalBtn) {
+    closeGoalBtn.addEventListener('click', () => {
+      soundManager.stopMotivationSound();
+      updatePreviewButtons(false);
+      isPreviewPlaying = false;
+      closeModal(goalModal);
+    });
+  }
+  if (saveGoalBtn) {
+    saveGoalBtn.addEventListener('click', () => {
+      soundManager.stopMotivationSound();
+      updatePreviewButtons(false);
+      isPreviewPlaying = false;
+      closeModal(goalModal);
+    });
+  }
+  if (goalBackdrop) {
+    goalBackdrop.addEventListener('click', () => {
+      soundManager.stopMotivationSound();
+      updatePreviewButtons(false);
+      isPreviewPlaying = false;
+      closeModal(goalModal);
+    });
+  }
+
+  // Goal Chips (Start Screen)
+  if (startGoalChips) {
+    startGoalChips.addEventListener('click', (e) => {
+      const chip = e.target.closest('.start-chip');
+      if (chip && chip.dataset.val) {
+        setActiveGoal(chip.dataset.val);
+      }
+    });
+  }
+  if (startCustomGoalInput) {
+    startCustomGoalInput.addEventListener('input', (e) => {
+      setActiveGoal(e.target.value);
+    });
+  }
+
+  // Goal Chips (Modal)
+  if (goalPresetChips) {
+    goalPresetChips.addEventListener('click', (e) => {
+      const chip = e.target.closest('.preset-chip');
+      if (chip && chip.dataset.val) {
+        setActiveGoal(chip.dataset.val);
+      }
+    });
+  }
+  if (customGoalInput) {
+    customGoalInput.addEventListener('input', (e) => {
+      setActiveGoal(e.target.value);
+    });
+  }
+
+  // Motivation Audio Upload Handlers
+  if (startAudioFileInput) {
+    startAudioFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handleAudioFileUpload(e.target.files[0]);
+      }
+    });
+  }
+  if (modalAudioFileInput) {
+    modalAudioFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handleAudioFileUpload(e.target.files[0]);
+      }
+    });
+  }
+
+  // Audio Preview Buttons
+  if (startPreviewSoundBtn) {
+    startPreviewSoundBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      togglePreviewMotivationAudio();
+    });
+  }
+  if (modalPreviewSoundBtn) {
+    modalPreviewSoundBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      togglePreviewMotivationAudio();
+    });
+  }
+
+  // Audio Reset Buttons
+  if (startRemoveSoundBtn) {
+    startRemoveSoundBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      removeCustomMotivationAudio();
+    });
+  }
+  if (modalRemoveSoundBtn) {
+    modalRemoveSoundBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      removeCustomMotivationAudio();
+    });
+  }
 
   // Log Modal
   logBtn.addEventListener('click', () => {
@@ -1300,3 +1820,43 @@ initStartScreenExercisePicker();
 selectExercise(initialExId);
 initExercisePicker();
 setupEventListeners();
+
+// Initialize Exercise Kinematic Animators (GymMane Inspired)
+try {
+  if (typeof ExerciseAnimator !== 'undefined') {
+    if (startExerciseAnimCanvas) {
+      startAnimator = new ExerciseAnimator(startExerciseAnimCanvas, {
+        onAngleUpdate: (angle, phase, phaseText) => {
+          if (demoAngleLive) demoAngleLive.textContent = `${angle}°`;
+          if (demoPhaseLabel) demoPhaseLabel.textContent = phaseText;
+        }
+      });
+      if (currentExercise) startAnimator.setExercise(currentExercise);
+    }
+    if (formModalAnimCanvas) {
+      formModalAnimator = new ExerciseAnimator(formModalAnimCanvas, {
+        onAngleUpdate: (angle, phase, phaseText) => {
+          const live = document.getElementById('formModalAngleLive');
+          const lbl = document.getElementById('formModalPhaseLabel');
+          if (live) live.textContent = `${angle}°`;
+          if (lbl) lbl.textContent = phaseText;
+        }
+      });
+    }
+  }
+} catch (e) {
+  console.warn('ExerciseAnimator init note:', e);
+}
+
+
+// Initialize stored motivation sound & goal UI
+loadMotivationAudioFromStorage().then(stored => {
+  if (stored && stored.dataUrl) {
+    soundManager.setCustomMotivationAudio(stored.dataUrl, stored.fileName);
+    updateMotivationSoundUI(stored.fileName);
+  } else {
+    updateMotivationSoundUI(null);
+  }
+  updateGoalUI();
+});
+

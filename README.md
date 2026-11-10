@@ -21,10 +21,15 @@ Works natively in the **Web Browser (Mobile & PC)** and on **Desktop (Python Win
   - Supports **curl-like** movements ($start > end$) and **press-like** movements ($start < end$).
   - Built-in hysteresis, minimum range of motion threshold (`minRange`), and minimum rep duration (`minRepMs`) to reject wobbles and half-reps.
   - **Timer Mode**: Accurately clocks isometric holds (e.g., plank) while your body alignment stays within tolerance.
-- **Tiered Audio & Voice SFX**:
-  - **Reps 1 to 19**: Workout bell chime + vocal counting ("1", "2", "3"...).
-  - **Reps 20 to 34**: High-energy audio motivation track.
-  - **Reps 35+**: High-tier milestone celebration track.
+- **Workout Goal & Custom Motivation Audio**:
+  - Set personal target reps (e.g. 8, 10, 12, 15, 20) or hold duration.
+  - **Upload Motivation Audio**: Upload your personal favorite hype track, song clip, or motivational chant (.mp3, .wav, .m4a, .ogg) that automatically celebrates reaching your goal.
+  - Bell chime + real-time speech vocal counting on every rep.
+- **Biomechanical Exercise Animation Engine (GymMane Inspired)**:
+  - Procedural vector kinematic mannequin demonstrating proper exercise technique, active joint angles, movement phases, and sightline guidance across all 26 movements.
+  - Real-time animated demonstration on the Start Screen and mid-workout Form Guide modal.
+- **Pinterest Minimal-Maximalism Aesthetics**:
+  - Editorial display typography featuring Syne and Outfit, obsidian glass surfaces, and hairline vector symbols.
 - **Manual Mode**: Clean large-button interface for cable, machine, or off-camera sets.
 - **Session Log**: Local storage persistence for sets completed today, with reps/seconds, weight used, and timestamps.
 - **Live Angle Tuning Panel**: Instant on-screen debugging and real-time threshold calibration with keyboard shortcut `d`.

@@ -31,7 +31,8 @@
   --spring: cubic-bezier(0.16, 1, 0.3, 1);
   --smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
-  --sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --sans: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --display: 'Syne', -apple-system, BlinkMacSystemFont, sans-serif;
   --num: 'Space Grotesk', 'Barlow Condensed', monospace;
 }
 
@@ -228,9 +229,10 @@ input:focus {
 }
 
 .title {
+  font-family: var(--display);
   font-weight: 800;
   letter-spacing: -0.02em;
-  font-size: 14px;
+  font-size: 15px;
   text-transform: uppercase;
 }
 
@@ -1152,9 +1154,10 @@ input:focus {
   border-bottom: 1px solid var(--line);
 }
 .sheet-title-group h3 {
-  font-size: 18px;
+  font-family: var(--display);
+  font-size: 19px;
   font-weight: 800;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.025em;
 }
 .sheet-sub {
   font-size: 12px;
@@ -1790,4 +1793,612 @@ input:focus {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+
+/* ==========================================================================
+   Workout Goal & Motivation Audio Design System
+   ========================================================================== */
+
+/* HUD Goal Badge Pill */
+.hud-goal-pill {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s var(--smooth);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid transparent;
+}
+.hud-goal-pill:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+.hud-goal-pill.achieved {
+  background: rgba(0, 245, 155, 0.18);
+  color: var(--ok);
+  border-color: rgba(0, 245, 155, 0.45);
+  box-shadow: 0 0 10px rgba(0, 245, 155, 0.3);
+}
+
+/* Goal Achieved HUD Animation */
+.counter-card.goal-achieved {
+  animation: goal-glow-bloom 0.9s var(--spring);
+  border-color: rgba(0, 245, 155, 0.6) !important;
+  box-shadow: 0 0 36px rgba(0, 245, 155, 0.4) !important;
+}
+@keyframes goal-glow-bloom {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+/* Start Screen Target Goal & Audio Card */
+.start-target-card {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  text-align: left;
+}
+
+.target-card-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.target-card-row.sound-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 8px;
+}
+
+.target-title-bar, .sound-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.target-icon, .sound-icon {
+  width: 13px;
+  height: 13px;
+  color: var(--cyan);
+}
+.target-label, .sound-label {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #8e99ac;
+  letter-spacing: 0.07em;
+}
+.target-val-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--cyan);
+  background: rgba(0, 240, 255, 0.1);
+  padding: 1px 7px;
+  border-radius: 99px;
+}
+.sound-tag {
+  margin-left: auto;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--ok);
+  background: rgba(0, 245, 155, 0.1);
+  padding: 1px 6px;
+  border-radius: 99px;
+}
+
+.start-goal-chips {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.start-chip {
+  height: 28px;
+  min-width: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.04);
+  color: #8e99ac;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  cursor: pointer;
+  transition: all 0.18s var(--smooth);
+  display: grid;
+  place-items: center;
+}
+.start-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+.start-chip.active {
+  background: rgba(0, 240, 255, 0.15);
+  color: #fff;
+  border-color: rgba(0, 240, 255, 0.45);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+.start-custom-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+#startCustomGoalInput {
+  width: 48px;
+  height: 28px;
+  padding: 0 4px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: #fff;
+}
+#startCustomGoalInput:focus {
+  border-color: var(--cyan);
+}
+.custom-unit-text {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.start-sound-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+.sound-name-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+.sound-mini-btns {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-shrink: 0;
+}
+.sound-mini-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.18s var(--smooth);
+}
+.sound-mini-btn svg {
+  width: 12px;
+  height: 12px;
+}
+.sound-mini-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+.sound-mini-btn.upload:hover {
+  color: var(--cyan);
+  border-color: rgba(0, 240, 255, 0.4);
+}
+.sound-mini-btn.remove:hover {
+  color: var(--danger);
+  border-color: rgba(255, 77, 77, 0.4);
+}
+
+/* ==========================================================================
+   Goal & Motivation Audio Modal (#goalModal)
+   ========================================================================== */
+.goal-sheet-container {
+  max-width: 520px;
+}
+.goal-modal-body {
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 75dvh;
+  overflow-y: auto;
+}
+.goal-section-card {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+.goal-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.goal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.goal-card-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--cyan);
+}
+.goal-card-title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+.goal-highlight-val {
+  font-family: var(--num);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ok);
+}
+.sound-badge-active {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: rgba(0, 245, 155, 0.12);
+  color: var(--ok);
+  border: 1px solid rgba(0, 245, 155, 0.25);
+}
+.goal-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+.goal-preset-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.preset-chip {
+  height: 32px;
+  min-width: 40px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.2s var(--smooth);
+}
+.preset-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.preset-chip.active {
+  background: rgba(0, 240, 255, 0.16);
+  color: #fff;
+  border-color: rgba(0, 240, 255, 0.5);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+}
+
+.custom-goal-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 4px;
+}
+.custom-goal-row label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+.input-unit-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-unit-wrap input {
+  width: 90px;
+  height: 36px;
+  padding: 0 34px 0 12px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+}
+.unit-label {
+  position: absolute;
+  right: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.sound-uploader-box {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sound-file-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.file-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  display: grid;
+  place-items: center;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+.file-icon-wrap svg {
+  width: 18px;
+  height: 18px;
+}
+.file-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+.file-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.file-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.sound-action-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sound-action-btn {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all 0.2s var(--smooth);
+}
+.sound-action-btn svg.btn-icon {
+  width: 13px;
+  height: 13px;
+}
+.sound-action-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--line-strong);
+}
+.sound-action-btn.primary {
+  background: rgba(0, 240, 255, 0.12);
+  color: var(--cyan);
+  border-color: rgba(0, 240, 255, 0.35);
+}
+.sound-action-btn.primary:hover {
+  background: rgba(0, 240, 255, 0.2);
+}
+.sound-action-btn.upload {
+  background: rgba(0, 245, 155, 0.12);
+  color: var(--ok);
+  border-color: rgba(0, 245, 155, 0.35);
+}
+.sound-action-btn.upload:hover {
+  background: rgba(0, 245, 155, 0.2);
+}
+.sound-action-btn.danger {
+  background: rgba(255, 77, 77, 0.1);
+  color: var(--danger);
+  border-color: rgba(255, 77, 77, 0.3);
+}
+.sound-action-btn.danger:hover {
+  background: rgba(255, 77, 77, 0.2);
+}
+
+
+/* ==========================================================================
+   Exercise Motion Animation Stage (GymMane / Pinterest Aesthetic)
+   ========================================================================== */
+.exercise-demo-stage {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #090c13;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  margin-bottom: 2px;
+}
+.exercise-demo-stage.large {
+  height: 220px;
+}
+.demo-canvas-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+#startExerciseAnimCanvas, #formModalAnimCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.demo-stage-header {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+  pointer-events: none;
+}
+.demo-badge-group {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.demo-tag {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: rgba(0, 240, 255, 0.12);
+  color: var(--cyan);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  text-transform: uppercase;
+}
+.demo-angle-pill {
+  font-family: var(--num);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 99px;
+  background: rgba(0, 245, 155, 0.1);
+  color: var(--ok);
+  border: 1px solid rgba(0, 245, 155, 0.25);
+}
+.demo-play-btn {
+  pointer-events: auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(14, 18, 26, 0.7);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s var(--smooth);
+}
+.demo-play-btn svg {
+  width: 12px;
+  height: 12px;
+}
+.demo-play-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.demo-stage-footer {
+  position: absolute;
+  bottom: 8px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+  pointer-events: none;
+}
+.demo-phase-lbl {
+  font-family: var(--num);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.65);
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+.demo-angle-live {
+  font-family: var(--num);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+  background: rgba(0, 0, 0, 0.55);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+}
+
+/* Form Modal Specific Styling */
+.form-sheet-container {
+  max-width: 480px;
+}
+.form-modal-body {
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.form-tip-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.form-tip-card svg.tip-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--cyan);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.tip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.tip-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+#formModalTipText {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.45;
 }
